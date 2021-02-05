@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>coin_48px_title.ico</file>
+        <file>play_button.png</file>
+        <file>back.png</file>
+        <file>back3.png</file>
+        <file>square_rounded.png</file>
+        <file>coin0.png</file>
+        <file>coin1.png</file>
+        <file>coin2.png</file>
+        <file>coin3.png</file>
+        <file>coin4.png</file>
+        <file>coin5.png</file>
+        <file>v.png</file>
+        <file>background.jpg</file>
+        <file>LevelCoin.png</file>
+        <file>f.png</file>
+    </qresource>
+</RCC>
