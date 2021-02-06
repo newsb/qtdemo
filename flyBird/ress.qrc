@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/bird.gif</file>
+        <file>res/gif_0.png</file>
+        <file>res/gif_1.png</file>
+        <file>res/gif_2.png</file>
+        <file>res/gif_3.png</file>
+        <file>res/gif_4.png</file>
+        <file>res/gif_5.png</file>
+        <file>res/gif_6.png</file>
+        <file>res/gif_7.png</file>
+        <file>res/gif_8.png</file>
+        <file>res/gif_9.png</file>
+        <file>res/gif_10.png</file>
+        <file>res/gif_11.png</file>
+        <file>res/gif_12.png</file>
+        <file>res/gif_13.png</file>
+        <file>res/gif_14.png</file>
+        <file>res/gif_15.png</file>
+        <file>res/gif_16.png</file>
+        <file>res/gif_17.png</file>
+        <file>res/gif_18.png</file>
+        <file>res/gif_19.png</file>
+        <file>res/gif_20.png</file>
+        <file>res/gif_21.png</file>
+        <file>res/gif_22.png</file>
+        <file>res/gif_23.png</file>
+        <file>res/gif_24.png</file>
+        <file>res/gif_25.png</file>
+        <file>res/gif_26.png</file>
+        <file>res/gif_27.png</file>
+        <file>res/gif_28.png</file>
+        <file>res/gif_29.png</file>
+    </qresource>
+</RCC>
