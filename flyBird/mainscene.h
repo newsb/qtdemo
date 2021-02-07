@@ -13,5 +13,9 @@ public:
     ~MainScene();
 private:
     Bird * mBird;
+
+    // QWidget interface
+protected:
+    void paintEvent(QPaintEvent *event) override;
 };
 #endif // MAINSCENE_H
