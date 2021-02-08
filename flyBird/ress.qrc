@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/bird.gif</file>
         <file>res/gif_0.png</file>
         <file>res/gif_1.png</file>
         <file>res/gif_2.png</file>
