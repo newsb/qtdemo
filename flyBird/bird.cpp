@@ -27,8 +27,8 @@ Bird::Bird(QWidget *parent)
     m_menu = new QMenu();
     connect(m_menu->addAction("exit"), &QAction::triggered, [=]() { exit(0); });
 
-    speedX = 3 + rand() % (13);
-    speedY = 3 + rand() % (13);
+    speedX = 1 + rand() % (3);
+    speedY = 1 + rand() % (3);
 }
 
 void Bird::running() { this->mTimer->start(50); }

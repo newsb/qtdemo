@@ -20,8 +20,13 @@ class MainWidget : public QWidget {
 
     QVBoxLayout *vBoxLayout;
     QPushButton *btnStart;
+    QPushButton *btnSet;
+    QPushButton *btnHelp;
+    QPushButton *btnQuit;
     GameWidget *gameWidget;
 
     void startBtnClick();
+    void setBtnClick();
+    void helpBtnClick();
 };
 #endif // MAINWIDGET_H

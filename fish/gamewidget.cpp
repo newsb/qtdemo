@@ -15,6 +15,7 @@ GameWidget::GameWidget(QWidget *parent)
     this->btnStart->setIcon(QIcon("res/start.png"));
     this->btnStart->setIconSize(QSize(55, 55));
     this->btnStart->setFlat(true);
+    connect(btnStart, &QPushButton::clicked, this, &GameWidget::startEasy);
 
     this->btnEasy = new QPushButton(this);
     this->btnEasy->setIcon(QIcon("res/act.png"));
@@ -50,8 +51,6 @@ GameWidget::GameWidget(QWidget *parent)
     //    QPalette palette;
     //    palette.setBrush(QPalette::Background, QBrush(QPixmap("res/background.png")));
     //    this->setPalette(palette);
-
-    connect(btnStart, &QPushButton::clicked, this, &GameWidget::startEasy);
 }
 
 GameWidget::~GameWidget() {}
@@ -61,4 +60,5 @@ void GameWidget::backBtnClick() { this->hide(); }
 void GameWidget::startEasy() {
     mEasyView = new EasyView();
     mEasyView->show();
+    ((QWidget *)this->parent())->hide();
 }

@@ -18,13 +18,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     easyview.cpp \
     gamewidget.cpp \
+    gun.cpp \
     main.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    mypixmapitem.cpp \
+    myfish.cpp
 
 HEADERS += \
     easyview.h \
     gamewidget.h \
-    mainwidget.h
+    gun.h \
+    mainwidget.h \
+    mypixmapitem.h \
+    myfish.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

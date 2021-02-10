@@ -62,5 +62,6 @@ MainScene::~MainScene() {}
 
 void MainScene::paintEvent(QPaintEvent *) {
     QPainter p(this);
+
     p.drawPixmap(0, 0, this->mBird->mPix);
 }
