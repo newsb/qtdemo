@@ -7,9 +7,7 @@ MyPixmapItem::MyPixmapItem(const QString &filename, QGraphicsScene *scene) {
 
     scene->addItem(this);
 }
-QRectF MyPixmapItem::boundingRect() const {
-    return QRectF(-pix.width() / 2, -pix.height() / 2, pix.width(), pix.height());
-}
+QRectF MyPixmapItem::boundingRect() const { return QRectF(-pix.width() / 2, -pix.height(), pix.width(), pix.height()); }
 
 void MyPixmapItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
     painter->drawPixmap(-pix.width() / 2, -pix.height(), pix);

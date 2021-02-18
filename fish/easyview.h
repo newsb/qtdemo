@@ -21,6 +21,10 @@ class EasyView : public QGraphicsView {
     // QWidget interface
   protected:
     virtual void resizeEvent(QResizeEvent *event) override;
+
+    // QWidget interface
+  protected:
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // EASYVIEW_H

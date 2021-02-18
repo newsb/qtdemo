@@ -7,7 +7,7 @@ Gun::Gun(const QString &filename, QGraphicsScene *scene)
     this->setPos(scene->width() / 2, scene->height());
 }
 
-// QRectF Gun::boundingRect() const { return QRectF(-pix.width() / 2, -pix.height() / 2, pix.width(), pix.height()); }
+// QRectF Gun::boundingRect() const { return QRectF(-pix.width() / 2, -pix.height(), pix.width(), pix.height()); }
 
 // void Gun::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
 //    painter->drawPixmap(-pix.width() / 2, -pix.height(), pix);
