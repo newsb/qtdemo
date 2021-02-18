@@ -16,12 +16,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    bullet.cpp \
     easyview.cpp \
     gamewidget.cpp \
     gun.cpp \
     main.cpp \
     mainwidget.cpp \
+    mybullet.cpp \
     mypixmapitem.cpp \
     myfish.cpp
 
@@ -31,6 +31,7 @@ HEADERS += \
     gamewidget.h \
     gun.h \
     mainwidget.h \
+    mybullet.h \
     mypixmapitem.h \
     myfish.h
 
