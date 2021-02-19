@@ -22,6 +22,7 @@ SOURCES += \
     main.cpp \
     mainwidget.cpp \
     mybullet.cpp \
+    mynet.cpp \
     mypixmapitem.cpp \
     myfish.cpp
 
@@ -32,6 +33,7 @@ HEADERS += \
     gun.h \
     mainwidget.h \
     mybullet.h \
+    mynet.h \
     mypixmapitem.h \
     myfish.h
 

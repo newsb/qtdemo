@@ -56,6 +56,5 @@ void EasyView::mouseMoveEvent(QMouseEvent *event) {
 void EasyView::mousePressEvent(QMouseEvent *event) {
     QPoint p = event->pos();
     QLineF linef(width() / 2, height(), p.x(), p.y());
-
     MyBullet *bullet = new MyBullet("res/bullet.png", mScene, linef.angle());
 }

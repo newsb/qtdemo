@@ -10,6 +10,8 @@ MyFish::MyFish(const QString &filename, QGraphicsScene *scene)
     //    setPos(0, 0);
 }
 
+void MyFish::death() { setPos(-100, 88); }
+
 void MyFish::advance(int) {
     if (mapToScene(0, 0).y() <= 0 || mapToScene(0, 0).x() >= 800 || mapToScene(0, 0).y() >= 800) {
         setPos(-130, 200 + qrand() % 300);

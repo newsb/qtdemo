@@ -6,7 +6,7 @@
 class MyFish : public MyPixmapItem {
   public:
     MyFish(const QString &filename, QGraphicsScene *scene);
-
+    void death();
     // QGraphicsItem interface
   public:
     virtual void advance(int phase) override;
