@@ -12,10 +12,14 @@ MyFish::MyFish(const QString &filename, QGraphicsScene *scene)
 
 void MyFish::advance(int) {
     if (mapToScene(0, 0).y() <= 0 || mapToScene(0, 0).x() >= 800 || mapToScene(0, 0).y() >= 800) {
-        setPos(-130, 100 + qrand() % 400);
+        setPos(-130, 200 + qrand() % 300);
     } else {
         int speed = rand() % 10;
-        setPos(mapToScene(speed, -2));
+        if (speed % 2 == 0) {
+            setPos(mapToScene(speed, -2));
+        } else {
+            setPos(mapToScene(speed, 2));
+        }
     }
 }
 

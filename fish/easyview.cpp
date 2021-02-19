@@ -1,10 +1,11 @@
 #include "easyview.h"
+#include "mybullet.h"
 #include <QDebug>
 #include <QIcon>
 #include <QResizeEvent>
 
 EasyView::EasyView(QWidget *) {
-    resize(800, 533);
+    setFixedSize(800, 533);
     setWindowTitle("简单");
 
     setAutoFillBackground(true);
@@ -17,25 +18,28 @@ EasyView::EasyView(QWidget *) {
     mScene->setSceneRect(0, 0, width() - 4, height() - 4);
     this->setScene(mScene);
 
-    mGun = new Gun("res/pao.png", mScene);
+    mGun = new Gun("res/pao2.png", mScene);
     //    mGun->setPos(width() / 2, height());
     //    mScene->addItem(mGun);
 
     mFish1 = new MyFish("res/fish/1.png", mScene);
     //    mFish1->setPos(0, 100);
     //    mScene->addItem(mFish1);
-    //    mFish2 = new MyFish("res/fish/1.png", mScene);
-    //    mFish3 = new MyFish("res/fish/1.png", mScene);
-    //    mFish4 = new MyFish("res/fish/1.png", mScene);
-    //    mFish5 = new MyFish("res/fish/1.png", mScene);
+    mFish2 = new MyFish("res/fish/1.png", mScene);
+    mFish3 = new MyFish("res/fish/1.png", mScene);
+    mFish4 = new MyFish("res/fish/1.png", mScene);
+    mFish5 = new MyFish("res/fish/1.png", mScene);
 
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout, mScene, &QGraphicsScene::advance);
-    mTimer->start(50);
+    mTimer->start(100);
 }
 
 void EasyView::resizeEvent(QResizeEvent *event) {
     this->setBackgroundBrush(QBrush(QPixmap("res/b.png").scaled(event->size().width(), event->size().height())));
+    mScene->setSceneRect(0, 0, event->size().width() - 4, event->size().height() - 4);
+    //    mGun->setPos(event->size().width() / 2, event->size().height());
+    mGun->setPos(mScene->width() / 2, mScene->height());
 }
 
 void EasyView::mouseMoveEvent(QMouseEvent *event) {
@@ -47,4 +51,11 @@ void EasyView::mouseMoveEvent(QMouseEvent *event) {
     mGun->setRotation(-(linef.angle() - 90));
 
     // qDebug("angle:%f\n", -(linef.angle() - 90));
+}
+
+void EasyView::mousePressEvent(QMouseEvent *event) {
+    QPoint p = event->pos();
+    QLineF linef(width() / 2, height(), p.x(), p.y());
+
+    MyBullet *bullet = new MyBullet("res/bullet.png", mScene, linef.angle());
 }

@@ -1,14 +1,17 @@
 #ifndef MYBULLET_H
 #define MYBULLET_H
 
-#include <QObject>
+#include "mypixmapitem.h"
+#include <QGraphicsScene>
 
-class MyBullet : public QObject {
-    Q_OBJECT
+class MyBullet : public MyPixmapItem {
+
   public:
-    explicit MyBullet(QObject *parent = nullptr);
+    MyBullet(const QString &filename, QGraphicsScene *scene, qreal angle);
 
-  signals:
+    // QGraphicsItem interface
+  public:
+    virtual void advance(int phase) override;
 };
 
 #endif // BULLET_H
