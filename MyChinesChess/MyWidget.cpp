@@ -184,13 +184,25 @@ void MyWidget::drawStone(QPainter &painter, int id) {
 
     QPoint c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
+    painter.setBrush(Qt::LinearGradientPattern);
     if (selectId == id) {
         painter.setBrush(QBrush(Qt::white));
+        //        painter.setBrush(Qt::NoBrush);
     } else {
         painter.setBrush(QBrush(Qt::lightGray));
     }
-    painter.setPen(Qt::black);
+
+    painter.setPen(Qt::blue);
+    painter.drawEllipse(c, _r + 5, _r + 5);
+
+    painter.setPen(Qt::darkYellow);
     painter.drawEllipse(c, _r, _r);
+
+    /* painter.setPen(Qt::green);
+     painter.drawEllipse(c, _r - 5, _r - 5);
+*/
+
+    painter.setPen(Qt::black);
     if (_s[id]._red) {
         painter.setPen(Qt::red);
     }

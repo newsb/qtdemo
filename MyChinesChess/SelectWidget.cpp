@@ -35,7 +35,7 @@ SelectWidget::SelectWidget(QWidget *parent)
     btnNet->setFlat(true);
     btnNet->setText("网络模式");
     btnNet->setGeometry(22, 22, 110, 44);
-    connect(btnSingle, &QPushButton::clicked, [=]() {
+    connect(btnNet, &QPushButton::clicked, [=]() {
         //    网络 + 2人
         bool bServer = false;
         QMessageBox::StandardButton ret = QMessageBox::question(nullptr, "server or client?", "作为服务器启动？");
