@@ -23,31 +23,35 @@ MainWidget::MainWidget(QWidget *parent)
     label->setPixmap(QPixmap("res/logo.png").scaled(166, 33));
 
     this->btnStart = new QPushButton(this);
-    btnStart->setText("开始游戏");
+    //    this->btnStart->setText("开始游戏");
     this->btnStart->setIcon(QIcon("res/start.png"));
     this->btnStart->setIconSize(QSize(55, 55));
     this->btnStart->setFlat(true);
+    this->btnStart->setFocusPolicy(Qt::NoFocus);
     connect(this->btnStart, &QPushButton::clicked, this, &MainWidget::startBtnClick);
 
     this->btnSet = new QPushButton(this);
-    btnSet->setText("设置");
+    //    btnSet->setText("设置");
     this->btnSet->setIcon(QIcon("res/set.png"));
     this->btnSet->setIconSize(QSize(55, 55));
     this->btnSet->setFlat(true);
+    this->btnSet->setFocusPolicy(Qt::NoFocus);
     connect(this->btnSet, &QPushButton::clicked, this, &MainWidget::setBtnClick);
 
     this->btnHelp = new QPushButton(this);
-    btnHelp->setText("帮助");
+    //    btnHelp->setText("帮助");
     this->btnHelp->setIcon(QIcon("res/help.png"));
     this->btnHelp->setIconSize(QSize(75, 55));
     this->btnHelp->setFlat(true);
+    this->btnHelp->setFocusPolicy(Qt::NoFocus);
     connect(this->btnSet, &QPushButton::clicked, this, &MainWidget::helpBtnClick);
 
     this->btnQuit = new QPushButton(this);
-    btnQuit->setText("退出");
+    //    btnQuit->setText("退出");
     this->btnQuit->setIcon(QIcon("res/back.png"));
     this->btnQuit->setIconSize(QSize(75, 55));
     this->btnQuit->setFlat(true);
+    this->btnQuit->setFocusPolicy(Qt::NoFocus);
     connect(this->btnQuit, &QPushButton::clicked, this, &MainWidget::close);
 
     vBoxLayout = new QVBoxLayout();

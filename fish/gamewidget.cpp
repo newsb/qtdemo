@@ -15,22 +15,26 @@ GameWidget::GameWidget(QWidget *parent)
     this->btnStart->setIcon(QIcon("res/start.png"));
     this->btnStart->setIconSize(QSize(55, 55));
     this->btnStart->setFlat(true);
+    this->btnStart->setFocusPolicy(Qt::NoFocus);
     connect(btnStart, &QPushButton::clicked, this, &GameWidget::startEasy);
 
     this->btnEasy = new QPushButton(this);
     this->btnEasy->setIcon(QIcon("res/act.png"));
     this->btnEasy->setIconSize(QSize(45, 55));
     this->btnEasy->setFlat(true);
+    this->btnEasy->setFocusPolicy(Qt::NoFocus);
 
     this->btnHard = new QPushButton(this);
     this->btnHard->setIcon(QIcon("res/anchor.png"));
     this->btnHard->setIconSize(QSize(95, 55));
     this->btnHard->setFlat(true);
+    this->btnHard->setFocusPolicy(Qt::NoFocus);
 
     this->btnHelp = new QPushButton(this);
     this->btnHelp->setIcon(QIcon("res/help.png"));
     this->btnHelp->setIconSize(QSize(75, 55));
     this->btnHelp->setFlat(true);
+    this->btnHelp->setFocusPolicy(Qt::NoFocus);
 
     vBoxLayout = new QVBoxLayout();
     vBoxLayout->addWidget(label);
