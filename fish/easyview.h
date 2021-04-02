@@ -16,7 +16,7 @@ class EasyView : public QGraphicsView {
   private:
     QGraphicsScene *mScene;
     Gun *mGun;
-    MyFish *mFish1, *mFish2, *mFish3, *mFish4, *mFish5;
+    MyFish *mFish1, *mFish2, *mFish3, *mFish4 /*, *mFish5*/;
     QTimer *mTimer;
     // QWidget interface
   protected:

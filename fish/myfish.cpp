@@ -28,9 +28,9 @@ void MyFish::advance(int) {
 void MyFish::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
     char filename[50] = "0";
     static int i = 2;
-    if (i == 12) i = 1;
+    if (i == 4) i = 1;
 
-    sprintf(filename, "res/fish/%d.png", i++);
+    sprintf(filename, "res/shark_r%d.png", i++);
 
     bool ret = pix.load(filename);
     if (!ret) {

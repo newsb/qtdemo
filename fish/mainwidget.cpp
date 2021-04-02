@@ -5,7 +5,7 @@
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent) {
     setFixedSize(800, 533);
-    setWindowIcon(QIcon("res/logo-fish.png"));
+    setWindowIcon(QIcon("res/Fish_Icon.png"));
     setWindowTitle("捕鱼达人");
 
     //    QFile file;
@@ -16,16 +16,16 @@ MainWidget::MainWidget(QWidget *parent)
     //    file.close();
 
     QPalette palette;
-    palette.setBrush(QPalette::Background, QBrush(QPixmap("res/background.jpg").scaled(width(), height())));
+    palette.setBrush(QPalette::Background, QBrush(QPixmap("res/aboutus.png").scaled(width(), height())));
     this->setPalette(palette);
 
     this->label = new QLabel(this);
-    label->setPixmap(QPixmap("res/logo.png").scaled(166, 33));
+    label->setPixmap(QPixmap("res/logo.png"));
 
     this->btnStart = new QPushButton(this);
     //    this->btnStart->setText("开始游戏");
     this->btnStart->setIcon(QIcon("res/start.png"));
-    this->btnStart->setIconSize(QSize(55, 55));
+    this->btnStart->setIconSize(QSize(220, 56));
     this->btnStart->setFlat(true);
     this->btnStart->setFocusPolicy(Qt::NoFocus);
     connect(this->btnStart, &QPushButton::clicked, this, &MainWidget::startBtnClick);
@@ -33,7 +33,7 @@ MainWidget::MainWidget(QWidget *parent)
     this->btnSet = new QPushButton(this);
     //    btnSet->setText("设置");
     this->btnSet->setIcon(QIcon("res/set.png"));
-    this->btnSet->setIconSize(QSize(55, 55));
+    this->btnSet->setIconSize(QSize(180, 55));
     this->btnSet->setFlat(true);
     this->btnSet->setFocusPolicy(Qt::NoFocus);
     connect(this->btnSet, &QPushButton::clicked, this, &MainWidget::setBtnClick);
@@ -41,15 +41,15 @@ MainWidget::MainWidget(QWidget *parent)
     this->btnHelp = new QPushButton(this);
     //    btnHelp->setText("帮助");
     this->btnHelp->setIcon(QIcon("res/help.png"));
-    this->btnHelp->setIconSize(QSize(75, 55));
+    this->btnHelp->setIconSize(QSize(140, 50));
     this->btnHelp->setFlat(true);
     this->btnHelp->setFocusPolicy(Qt::NoFocus);
     connect(this->btnSet, &QPushButton::clicked, this, &MainWidget::helpBtnClick);
 
     this->btnQuit = new QPushButton(this);
     //    btnQuit->setText("退出");
-    this->btnQuit->setIcon(QIcon("res/back.png"));
-    this->btnQuit->setIconSize(QSize(75, 55));
+    this->btnQuit->setIcon(QIcon("res/exit.png"));
+    this->btnQuit->setIconSize(QSize(60, 32));
     this->btnQuit->setFlat(true);
     this->btnQuit->setFocusPolicy(Qt::NoFocus);
     connect(this->btnQuit, &QPushButton::clicked, this, &MainWidget::close);

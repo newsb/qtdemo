@@ -9,26 +9,25 @@ EasyView::EasyView(QWidget *) {
     setWindowTitle("简单");
 
     setAutoFillBackground(true);
-    setWindowIcon(QIcon("res/logo-fish.png"));
+    setWindowIcon(QIcon("res/Fish_Icon.png"));
     //
     setMouseTracking(true);
-    this->setBackgroundBrush(QBrush(QPixmap("res/b.png")));
+    this->setBackgroundBrush(QBrush(QPixmap("res/seaworld.png")));
 
     mScene = new QGraphicsScene();
     mScene->setSceneRect(0, 0, width() - 4, height() - 4);
     this->setScene(mScene);
 
-    mGun = new Gun("res/pao2.png", mScene);
+    mGun = new Gun("res/pao5.png", mScene);
     //    mGun->setPos(width() / 2, height());
     //    mScene->addItem(mGun);
 
-    mFish1 = new MyFish("res/fish/1.png", mScene);
+    mFish1 = new MyFish("res/shark_r1.png", mScene);
     //    mFish1->setPos(0, 100);
     //    mScene->addItem(mFish1);
-    mFish2 = new MyFish("res/fish/1.png", mScene);
-    mFish3 = new MyFish("res/fish/1.png", mScene);
-    mFish4 = new MyFish("res/fish/1.png", mScene);
-    mFish5 = new MyFish("res/fish/1.png", mScene);
+    mFish2 = new MyFish("res/shark_r2.png", mScene);
+    mFish3 = new MyFish("res/shark_r3.png", mScene);
+    mFish4 = new MyFish("res/shark_r4.png", mScene);
 
     mTimer = new QTimer(this);
     connect(mTimer, &QTimer::timeout, mScene, &QGraphicsScene::advance);
@@ -36,7 +35,7 @@ EasyView::EasyView(QWidget *) {
 }
 
 void EasyView::resizeEvent(QResizeEvent *event) {
-    this->setBackgroundBrush(QBrush(QPixmap("res/b.png").scaled(event->size().width(), event->size().height())));
+    this->setBackgroundBrush(QBrush(QPixmap("res/seaworld.png").scaled(event->size().width(), event->size().height())));
     mScene->setSceneRect(0, 0, event->size().width() - 4, event->size().height() - 4);
     //    mGun->setPos(event->size().width() / 2, event->size().height());
     mGun->setPos(mScene->width() / 2, mScene->height());
@@ -56,5 +55,5 @@ void EasyView::mouseMoveEvent(QMouseEvent *event) {
 void EasyView::mousePressEvent(QMouseEvent *event) {
     QPoint p = event->pos();
     QLineF linef(width() / 2, height(), p.x(), p.y());
-    MyBullet *bullet = new MyBullet("res/bullet.png", mScene, linef.angle());
+    MyBullet *bullet = new MyBullet("res/B5.png", mScene, linef.angle());
 }

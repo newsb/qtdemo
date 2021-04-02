@@ -15,15 +15,14 @@ class GameWidget : public QWidget {
     ~GameWidget();
 
   private:
-    QLabel *label;
+    //    QLabel *label;
     EasyView *mEasyView;
-    QPushButton *btnStart;
     QPushButton *btnEasy;
+    QPushButton *btnNormal;
     QPushButton *btnHard;
-    QPushButton *btnHelp;
+    QPushButton *btnQuit;
     QVBoxLayout *vBoxLayout;
 
-    QPushButton *btnBack;
     void backBtnClick();
     void startEasy();
 };
