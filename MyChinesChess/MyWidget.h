@@ -14,9 +14,6 @@ class MyWidget : public QWidget {
 
     const int COL_COUNT = 8;
     const int ROW_COUNT = 9;
-    // QWidget interface
-  protected:
-    virtual void paintEvent(QPaintEvent *event) override;
 
     void init(bool bRedSide);
     //当前该红棋走了
@@ -36,8 +33,6 @@ class MyWidget : public QWidget {
     QPainterPath getPaoBingPostionPath(QPoint &point, int half = 0) const;
     bool isBottomSide(int id);
 
-    //画棋子
-    void drawStone(QPainter &painter, int id);
     //根据棋子id，算出它的中心坐标
     QPoint center(int id);
     //根据坐标，计算行列
@@ -52,8 +47,13 @@ class MyWidget : public QWidget {
     int countStoneAtCol(int row, int col1, int col2);
     int countStoneAtRow(int col, int row1, int row2);
     bool canSelect();
+    void judgeGameOver();
     bool canMove(int moveId, int col, int row, int killId);
 
+  private:
+    void drawBoard(QPainter &painter);
+    //画棋子
+    void drawStone(QPainter &painter, int id);
     bool canMoveCHE(int moveId, int col, int row, int killId);
     bool canMoveMA(int moveId, int col, int row, int killId);
     bool canMoveXIANG(int moveId, int col, int row, int killId);
@@ -62,9 +62,9 @@ class MyWidget : public QWidget {
     bool canMovePAO(int moveId, int col, int row, int killId);
     bool canMoveBING(int moveId, int col, int row, int killId);
 
-    void judgeGameOver();
     // QWidget interface
   protected:
+    virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
 };
 #endif // MYWIDGET_H

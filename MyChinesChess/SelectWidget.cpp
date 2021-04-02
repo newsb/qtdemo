@@ -6,8 +6,36 @@
 SelectWidget::SelectWidget(QWidget *parent)
     : QWidget(parent) {
 
+    setFixedSize(800, 600);
+    bg = new QLabel(this);
+    bg->setGeometry(0, 0, 800, 600);
+    bg->setPixmap(QPixmap(":/res/bg.jpg").scaled(this->width(), this->height()));
+
     QVBoxLayout *layout = new QVBoxLayout;
 
+    bgTitle = new QLabel(this);
+    bgTitle->setGeometry(0, 0, 400, 145);
+    bgTitle->setPixmap(QPixmap(":/res/2.png").scaled(400, 145));
+    bgTitle->move(this->width() / 2 - bgTitle->width() / 2, 30);
+    initBtns();
+
+    //    layout->addWidget(bgTitle);
+
+    //    layout->addSpacing(77);
+    layout->addWidget(btnBase);
+    layout->addWidget(btnSingle);
+    layout->addWidget(btnNet);
+    layout->setAlignment(Qt::AlignBottom);
+    layout->setMargin(20);
+    layout->setSpacing(20);
+
+    //    layout->setGeometry(QRect(300, 160, 200, 107));
+    this->setLayout(layout);
+
+    this->setStyleSheet("QPushButton {font-family: 微软雅黑;font-size: 56px;color: #f16c4d}");
+}
+
+void SelectWidget::initBtns() {
     btnBase = new QPushButton(this);
     btnBase->setFlat(true);
     btnBase->setText("基本模式");
@@ -46,11 +74,4 @@ SelectWidget::SelectWidget(QWidget *parent)
         _borad->show();
         this->hide();
     });
-
-    layout->addWidget(btnBase);
-    layout->addWidget(btnSingle);
-    layout->addWidget(btnNet);
-    this->setLayout(layout);
-
-    this->setStyleSheet("QPushButton {font-size: 55px;color: red}");
 }

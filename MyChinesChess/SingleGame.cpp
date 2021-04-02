@@ -184,8 +184,9 @@ int SingleGame::calcScore() {
 
 void SingleGame::click(int id, int col, int row) {
     MyWidget::click(id, col, row);
-    //电脑执黑
-    if (!bTranRed) {
+    //电脑执黑,该电脑走了
+    if (!bTranRed && m_winner == 0) {
+
         QTimer::singleShot(100, [=]() {
             Step *step = getBestMove();
             //电脑走棋

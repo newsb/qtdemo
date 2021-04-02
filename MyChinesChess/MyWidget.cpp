@@ -45,10 +45,94 @@ void MyWidget::paintEvent(QPaintEvent *) {
     mColumnWidth = colw;
     mRowHeight = rowh;
     _r = colw < rowh ? colw / 2 : rowh / 2;
+
     QPainter p(this);
+
+    drawBoard(p);
+
+    //绘制棋子
+    for (int i = 0; i < 32; ++i) {
+        drawStone(p, i);
+    }
+
+    //绘制输赢结果。
+    if (m_winner == 1 || m_winner == 2) {
+        QRect rect(colw * 3, rowh * 5, colw * 4, rowh);
+        p.setPen(Qt::red);
+        p.drawText(rect, "GAME OVER", QTextOption(Qt::AlignCenter));
+    }
+}
+
+QPainterPath MyWidget::getPaoBingPostionPath(QPoint &point, int half) const {
+    QPainterPath path;
+    if (half == 0 || half == 1) {
+        //左上
+        path.moveTo(point.x() - 20, point.y() - 5);
+        path.lineTo(point.x() - 5, point.y() - 5);
+        path.lineTo(point.x() - 5, point.y() - 20);
+    }
+
+    if (half == 0 || half == 2) {
+        //右上
+        path.moveTo(point.x() + 5, point.y() - 20);
+        path.lineTo(point.x() + 5, point.y() - 5);
+        path.lineTo(point.x() + 20, point.y() - 5);
+    }
+    if (half == 0 || half == 1) {
+        //左下
+        path.moveTo(point.x() - 20, point.y() + 5);
+        path.lineTo(point.x() - 5, point.y() + 5);
+        path.lineTo(point.x() - 5, point.y() + 20);
+    }
+
+    if (half == 0 || half == 2) {
+        //右下
+        path.moveTo(point.x() + 20, point.y() + 5);
+        path.lineTo(point.x() + 5, point.y() + 5);
+        path.lineTo(point.x() + 5, point.y() + 20);
+    }
+    return path;
+}
+
+bool MyWidget::isBottomSide(int id) { return _bRedSide == _s[id]._red; }
+
+void MyWidget::drawStone(QPainter &painter, int id) {
+    if (_s[id]._dead) return;
+
+    QPoint c = center(id);
+    QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
+    //    painter.setBrush(Qt::LinearGradientPattern);
+    if (selectId == id) {
+        painter.setBrush(QBrush(Qt::white));
+        //        painter.setBrush(Qt::NoBrush);
+    } else {
+        painter.setBrush(QBrush(Qt::lightGray));
+    }
+
+    painter.setPen(Qt::darkYellow);
+    painter.drawEllipse(c, _r + 5, _r + 5);
+
+    painter.setPen(Qt::darkYellow);
+    painter.drawEllipse(c, _r, _r);
+
+    /* painter.setPen(Qt::green);
+     painter.drawEllipse(c, _r - 5, _r - 5);
+*/
+
+    painter.setPen(Qt::black);
+    if (_s[id]._red) {
+        painter.setPen(Qt::red);
+    }
+    painter.setFont(QFont("微软雅黑", _r, 700));
+    painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
+}
+
+void MyWidget::drawBoard(QPainter &p) {
+    int colw = mColumnWidth;
+    int rowh = mRowHeight;
     p.setRenderHint(QPainter::Antialiasing); //抗锯齿
     QPen pen = QPen(QColor(Qt::lightGray));
-    pen.setWidth(2);
+    pen.setWidth(3);
     p.setPen(pen);
     //竖线
     for (int i = 0; i <= COL_COUNT; i++) {
@@ -133,83 +217,7 @@ void MyWidget::paintEvent(QPaintEvent *) {
     //    p.rotate(45);
     p.drawText(rect, "汉界", QTextOption(Qt::AlignCenter));
     //    p.restore();
-
-    //绘制棋子
-    for (int i = 0; i < 32; ++i) {
-        drawStone(p, i);
-    }
-    //绘制输赢结果。
-    if (m_winner == 1 || m_winner == 2) {
-        rect = QRect(colw * 3, rowh * 5, colw * 4, rowh);
-        p.setPen(Qt::red);
-        p.drawText(rect, "GAME OVER", QTextOption(Qt::AlignCenter));
-    }
 }
-
-QPainterPath MyWidget::getPaoBingPostionPath(QPoint &point, int half) const {
-    QPainterPath path;
-    if (half == 0 || half == 1) {
-        //左上
-        path.moveTo(point.x() - 20, point.y() - 5);
-        path.lineTo(point.x() - 5, point.y() - 5);
-        path.lineTo(point.x() - 5, point.y() - 20);
-    }
-
-    if (half == 0 || half == 2) {
-        //右上
-        path.moveTo(point.x() + 5, point.y() - 20);
-        path.lineTo(point.x() + 5, point.y() - 5);
-        path.lineTo(point.x() + 20, point.y() - 5);
-    }
-    if (half == 0 || half == 1) {
-        //左下
-        path.moveTo(point.x() - 20, point.y() + 5);
-        path.lineTo(point.x() - 5, point.y() + 5);
-        path.lineTo(point.x() - 5, point.y() + 20);
-    }
-
-    if (half == 0 || half == 2) {
-        //右下
-        path.moveTo(point.x() + 20, point.y() + 5);
-        path.lineTo(point.x() + 5, point.y() + 5);
-        path.lineTo(point.x() + 5, point.y() + 20);
-    }
-    return path;
-}
-
-bool MyWidget::isBottomSide(int id) { return _bRedSide == _s[id]._red; }
-
-void MyWidget::drawStone(QPainter &painter, int id) {
-    if (_s[id]._dead) return;
-
-    QPoint c = center(id);
-    QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
-    painter.setBrush(Qt::LinearGradientPattern);
-    if (selectId == id) {
-        painter.setBrush(QBrush(Qt::white));
-        //        painter.setBrush(Qt::NoBrush);
-    } else {
-        painter.setBrush(QBrush(Qt::lightGray));
-    }
-
-    painter.setPen(Qt::blue);
-    painter.drawEllipse(c, _r + 5, _r + 5);
-
-    painter.setPen(Qt::darkYellow);
-    painter.drawEllipse(c, _r, _r);
-
-    /* painter.setPen(Qt::green);
-     painter.drawEllipse(c, _r - 5, _r - 5);
-*/
-
-    painter.setPen(Qt::black);
-    if (_s[id]._red) {
-        painter.setPen(Qt::red);
-    }
-    painter.setFont(QFont("微软雅黑", _r, 700));
-    painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
-}
-
 QPoint MyWidget::center(int id) { return QPoint((_s[id]._col + 1) * mColumnWidth, (_s[id]._row + 1) * mRowHeight); }
 
 bool MyWidget::getColRow(QPoint pt, int &col, int &row) {
