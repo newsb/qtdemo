@@ -118,7 +118,7 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     /* painter.setPen(Qt::green);
      painter.drawEllipse(c, _r - 5, _r - 5);
 */
-
+ //todo :悔棋
     painter.setPen(Qt::black);
     if (_s[id]._red) {
         painter.setPen(Qt::red);
