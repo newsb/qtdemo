@@ -4,11 +4,16 @@
 #include <QPainter>
 #include <QtMath>
 /**todo :
- 将军的时候，震动提示；
+    悔棋
+    棋局界面调整，不从左上角、右下角开始绘制棋盘
+    将军的时候，震动提示；
+    将军的时候，不允许动其他棋子
  * */
 MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent) {
     resize(600, 600);
+    //隐藏form标题栏
+    // setWindowFlags(Qt::FramelessWindowHint);
 
     //    for (int i = 0; i < 32; ++i) {
     //        _s[i].init(i);
@@ -40,8 +45,8 @@ void MyWidget::init(bool bRedSide) {
 MyWidget::~MyWidget() {}
 
 void MyWidget::paintEvent(QPaintEvent *) {
-    int colw = this->width() / (COL_COUNT + 2);
-    int rowh = this->height() / (ROW_COUNT + 2);
+    double colw =1.0* (this->width() - PADDING_LEFT - PADDING_RIGHT) / (COL_COUNT + 2);
+    double rowh = 1.0*(this->height() - PADDING_TOP - PADDING_BOTTOM) / (ROW_COUNT + 2);
     mColumnWidth = colw;
     mRowHeight = rowh;
     _r = colw < rowh ? colw / 2 : rowh / 2;
@@ -57,7 +62,7 @@ void MyWidget::paintEvent(QPaintEvent *) {
 
     //绘制输赢结果。
     if (m_winner == 1 || m_winner == 2) {
-        QRect rect(colw * 3, rowh * 5, colw * 4, rowh);
+        QRect rect(PADDING_LEFT + colw * 3, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 4, +PADDING_TOP + rowh);
         p.setPen(Qt::red);
         p.drawText(rect, "GAME OVER", QTextOption(Qt::AlignCenter));
     }
@@ -99,7 +104,7 @@ bool MyWidget::isBottomSide(int id) { return _bRedSide == _s[id]._red; }
 void MyWidget::drawStone(QPainter &painter, int id) {
     if (_s[id]._dead) return;
 
-    QPoint c = center(id);
+    QPointF c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
     //    painter.setBrush(Qt::LinearGradientPattern);
     if (selectId == id) {
@@ -128,102 +133,130 @@ void MyWidget::drawStone(QPainter &painter, int id) {
 }
 
 void MyWidget::drawBoard(QPainter &p) {
-    int colw = mColumnWidth;
-    int rowh = mRowHeight;
+    double colw = mColumnWidth;
+    double rowh = mRowHeight;
     p.setRenderHint(QPainter::Antialiasing); //抗锯齿
     QPen pen = QPen(QColor(Qt::lightGray));
     pen.setWidth(3);
     p.setPen(pen);
+
+
+
     //竖线
     for (int i = 0; i <= COL_COUNT; i++) {
         if (i != COL_COUNT && i != 0) {
-            p.drawLine(colw * (1 + i), rowh, colw * (1 + i), ((COL_COUNT / 2) + 1) * rowh);
-            p.drawLine(colw * (1 + i), ((COL_COUNT / 2) + 2) * rowh, colw * (1 + i), height() - rowh);
+            QPointF pff(PADDING_LEFT + colw * (1 + i), PADDING_TOP + rowh);
+            QPointF pft(PADDING_LEFT + colw * (1 + i), ((COL_COUNT / 2) + 1) * rowh +PADDING_TOP);
+            p.drawLine(pff, pft);
+
+            pff.setX(PADDING_LEFT + colw * (1 + i));
+            pff.setY(PADDING_TOP + ((COL_COUNT / 2) + 2) * rowh);
+            pft.setX(PADDING_LEFT + colw * (1 + i));
+            pft.setY(height() - rowh - PADDING_BOTTOM);
+            p.drawLine(pff,pft );
 
         } else {
-            p.drawLine(colw * (1 + i), rowh, colw * (1 + i), height() - rowh);
+            QPointF pff(PADDING_LEFT + colw * (1 + i), rowh + PADDING_TOP);
+            QPointF pft(PADDING_LEFT + colw * (1 + i), height() - rowh - PADDING_BOTTOM);
+            p.drawLine(pff,pft);
         }
     }
     //    pen.setColor(QColor(Qt::red));
     //    p.setPen(pen);
     //横线
     for (int i = 0; i <= ROW_COUNT; i++) {
-        p.drawLine(colw, rowh * (1 + i), width() - colw, rowh * (1 + i));
+        QPointF pff(colw+PADDING_LEFT, rowh * (1 + i) +PADDING_TOP);
+        QPointF pft(width() - colw - PADDING_RIGHT, rowh * (1 + i)+ PADDING_TOP);
+        p.drawLine(pff,pft) ;
     }
     //九宫格
-    p.drawLine(colw * 4, rowh, 6 * colw, rowh * 3);
-    p.drawLine(colw * 6, rowh, colw * 4, 3 * rowh);
-    p.drawLine(colw * 4, rowh * 10, 6 * colw, rowh * 8);
-    p.drawLine(colw * 6, rowh * 10, colw * 4, 8 * rowh);
+    QPointF pff(PADDING_LEFT + colw * 4, PADDING_TOP + rowh);
+    QPointF pft(PADDING_LEFT + 6 * colw, PADDING_TOP + rowh * 3);
+    p.drawLine(pff,pft );
+
+     pff=QPointF(PADDING_LEFT + colw * 6, PADDING_TOP + rowh);
+     pft=QPointF(PADDING_LEFT + colw * 4, PADDING_TOP + 3 * rowh);
+    p.drawLine(pff,pft );
+
+    pff=QPointF(PADDING_LEFT + colw * 4, PADDING_TOP + rowh * 10);
+    pft=QPointF(PADDING_LEFT + 6 * colw, PADDING_TOP + rowh * 8);
+    p.drawLine(pff,pft );
+
+    pff=QPointF(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 10);
+    pft=QPointF(PADDING_LEFT + colw * 4, PADDING_TOP + 8 * rowh);
+    p.drawLine(pff,pft);
 
     //炮 位置
-    QPoint pt = QPoint(colw * 2, rowh * 3);
+    QPoint pt = QPoint(PADDING_LEFT + colw * 2, PADDING_TOP + rowh * 3);
     QPainterPath path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
 
-    pt.setX(colw * 8);
+    pt.setX(PADDING_LEFT + colw * 8);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
 
-    pt.setY(rowh * 8);
+    pt.setY(PADDING_TOP + rowh * 8);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
 
-    pt.setX(colw * 2);
+    pt.setX(PADDING_LEFT + colw * 2);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
     //上部 兵位置
-    pt.setX(colw);
-    pt.setY(rowh * 4);
+    pt.setX(PADDING_LEFT + colw);
+    pt.setY(PADDING_TOP + rowh * 4);
     path = this->getPaoBingPostionPath(pt, 2);
     p.drawPath(path);
-    pt.setX(colw * 3);
+    pt.setX(PADDING_LEFT + colw * 3);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 5);
+    pt.setX(PADDING_LEFT + colw * 5);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 7);
+    pt.setX(PADDING_LEFT + colw * 7);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 9);
+    pt.setX(PADDING_LEFT + colw * 9);
     path = this->getPaoBingPostionPath(pt, 1);
     p.drawPath(path);
     //下部 兵位置
-    pt.setX(colw);
-    pt.setY(rowh * 7);
+    pt.setX(PADDING_LEFT + colw);
+    pt.setY(PADDING_TOP + rowh * 7);
     path = this->getPaoBingPostionPath(pt, 2);
     p.drawPath(path);
-    pt.setX(colw * 3);
+    pt.setX(PADDING_LEFT + colw * 3);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 5);
+    pt.setX(PADDING_LEFT + colw * 5);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 7);
+    pt.setX(PADDING_LEFT + colw * 7);
     path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
-    pt.setX(colw * 9);
+    pt.setX(PADDING_LEFT + colw * 9);
     path = this->getPaoBingPostionPath(pt, 1);
     p.drawPath(path);
 
-    QRect rect = QRect(colw * 1, rowh * 5, colw * 3, rowh);
+    QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 3, PADDING_TOP + rowh);
     p.setFont(QFont("华文隶书", 24));
     p.setPen(Qt::lightGray);
     p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
 
-    rect = QRect(colw * 6, rowh * 5, colw * 3, rowh);
+    rect = QRect(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 3, PADDING_TOP + rowh);
     //    p.save();
     //    p.rotate(45);
     p.drawText(rect, "汉界", QTextOption(Qt::AlignCenter));
     //    p.restore();
 }
-QPoint MyWidget::center(int id) { return QPoint((_s[id]._col + 1) * mColumnWidth, (_s[id]._row + 1) * mRowHeight); }
+
+QPointF MyWidget::center(int id) {
+    return QPointF(PADDING_LEFT + (_s[id]._col + 1) * mColumnWidth, PADDING_TOP + (_s[id]._row + 1) * mRowHeight);
+}
 
 bool MyWidget::getColRow(QPoint pt, int &col, int &row) {
-    double d = 1.0 * pt.x() / mColumnWidth;
+    double d = 1.0 * (pt.x() - PADDING_LEFT) / mColumnWidth;
     col = qRound(d) - 1;
-    d = 1.0 * pt.y() / mRowHeight;
+    d = 1.0 * (pt.y() - PADDING_TOP) / mRowHeight;
     row = qRound(d) - 1;
     //    qDebug() << "d=" << d << ";col=" << col << ";row=" << row;
     return true;
