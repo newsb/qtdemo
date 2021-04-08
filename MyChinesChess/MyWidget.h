@@ -5,10 +5,10 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QWidget>
+#include "Step.h"
 
 class MyWidget : public QWidget {
     Q_OBJECT
-
   public:
     MyWidget(QWidget *parent = nullptr);
     ~MyWidget();
@@ -56,7 +56,14 @@ class MyWidget : public QWidget {
     void judgeGameOver();
     bool canMove(int moveId, int col, int row, int killId);
 
+protected:
+    void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
+    QVector<Step *>  mPassSteps;
+//    void logStep(int moveId, int killId, int col, int row);
+    void unfakeMove(Step *step);
+    void repentanceStep(int backCount);
   private:
+      QRect mBackRect,mRepentanceRect;
     void drawBoard(QPainter &painter);
     //画棋子
     void drawStone(QPainter &painter, int id);
@@ -72,5 +79,8 @@ class MyWidget : public QWidget {
   protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
+ signals:
+     void back_signal();
+     void repentance_signal(int backCount);
 };
 #endif // MYWIDGET_H

@@ -8,6 +8,8 @@
     棋局界面调整，不从左上角、右下角开始绘制棋盘
     将军的时候，震动提示；
     将军的时候，不允许动其他棋子
+加载残棋
+
  * */
 MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent) {
@@ -25,6 +27,24 @@ MyWidget::MyWidget(QWidget *parent)
         if (i != 20 && i != 5) _s[i]._dead = true;
     }
 #endif
+
+    mPassSteps.clear();
+
+    connect(this,&MyWidget::repentance_signal,&MyWidget::repentanceStep);
+}
+void MyWidget::repentanceStep(int backCount){
+    while (backCount>0){
+        if(mPassSteps.isEmpty() ) return ;
+        Step *step = mPassSteps.back();
+        unfakeMove(step);
+        update();
+        qDebug()<<"悔棋。"<<_s[step->_moveid].getText()
+                 <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
+                 <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo;
+        mPassSteps.pop_back();//mPassSteps.removeLast();
+        delete step;
+        backCount--;
+    }
 }
 void MyWidget::init(bool bRedSide) {
     for (int i = 0; i < 32; ++i) {
@@ -52,6 +72,10 @@ void MyWidget::paintEvent(QPaintEvent *) {
     _r = colw < rowh ? colw / 2 : rowh / 2;
 
     QPainter p(this);
+    //棋盘背景图
+    QPixmap pix(":/res/bg.jpg");
+    pix=pix.scaled(this->width(),this->height());
+    p.drawPixmap(0,0,pix);
 
     drawBoard(p);
 
@@ -64,8 +88,21 @@ void MyWidget::paintEvent(QPaintEvent *) {
     if (m_winner == 1 || m_winner == 2) {
         QRect rect(PADDING_LEFT + colw * 3, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 4, +PADDING_TOP + rowh);
         p.setPen(Qt::red);
-        p.drawText(rect, "GAME OVER", QTextOption(Qt::AlignCenter));
+        p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
     }
+    //绘制操作按钮
+    mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
+               PADDING_RIGHT-20,25);
+    p.drawRect(mBackRect);
+    p.setPen(Qt::red);
+    p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
+
+    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
+                PADDING_RIGHT-20,25);
+    p.drawRect(mRepentanceRect);
+    p.setPen(Qt::red);
+    p.drawText(mRepentanceRect, "Repentance", QTextOption(Qt::AlignCenter));
+
 }
 
 QPainterPath MyWidget::getPaoBingPostionPath(QPoint &point, int half) const {
@@ -103,7 +140,7 @@ bool MyWidget::isBottomSide(int id) { return _bRedSide == _s[id]._red; }
 
 void MyWidget::drawStone(QPainter &painter, int id) {
     if (_s[id]._dead) return;
-
+    painter.save();
     QPointF c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
     //    painter.setBrush(Qt::LinearGradientPattern);
@@ -130,14 +167,16 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     }
     painter.setFont(QFont("微软雅黑", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
+
+    painter.restore();
 }
 
 void MyWidget::drawBoard(QPainter &p) {
     double colw = mColumnWidth;
     double rowh = mRowHeight;
     p.setRenderHint(QPainter::Antialiasing); //抗锯齿
-    QPen pen = QPen(QColor(Qt::lightGray));
-    pen.setWidth(3);
+    QPen pen = QPen(QColor(Qt::darkCyan));
+    pen.setWidth(5);
     p.setPen(pen);
 
 
@@ -185,8 +224,10 @@ void MyWidget::drawBoard(QPainter &p) {
     pff=QPointF(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 10);
     pft=QPointF(PADDING_LEFT + colw * 4, PADDING_TOP + 8 * rowh);
     p.drawLine(pff,pft);
-
     //炮 位置
+    p.save();
+    pen.setWidth(3);
+    p.setPen(pen);
     QPoint pt = QPoint(PADDING_LEFT + colw * 2, PADDING_TOP + rowh * 3);
     QPainterPath path = this->getPaoBingPostionPath(pt);
     p.drawPath(path);
@@ -237,16 +278,20 @@ void MyWidget::drawBoard(QPainter &p) {
     path = this->getPaoBingPostionPath(pt, 1);
     p.drawPath(path);
 
-    QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 3, PADDING_TOP + rowh);
-    p.setFont(QFont("华文隶书", 24));
-    p.setPen(Qt::lightGray);
-    p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
+    p.restore();
 
-    rect = QRect(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 3, PADDING_TOP + rowh);
-    //    p.save();
+    QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5,
+                        colw * 3,  rowh);
+    p.setFont(QFont("华文隶书", 24));
+    p.setPen(Qt::darkYellow);
+    p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
+//    p.drawRect(rect)    ;
+    rect = QRect(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 5,
+                  colw * 3,  rowh);
+
     //    p.rotate(45);
     p.drawText(rect, "汉界", QTextOption(Qt::AlignCenter));
-    //    p.restore();
+
 }
 
 QPointF MyWidget::center(int id) {
@@ -293,7 +338,7 @@ bool MyWidget::canMove(int moveId, int col, int row, int killId) {
             return false;
         }
     }
-    // yixia不用考虑目标位置是自己的棋子，这种情况已经过滤了
+    //  不用考虑目标位置是自己的棋子，这种情况已经过滤了
     switch (_s[moveId]._type) {
         case MyStone::CHE:
             return canMoveCHE(moveId, col, row, killId);
@@ -553,6 +598,11 @@ void MyWidget::click(int id, int col, int row) {
 
         if (canMove(selectId, col, row, id)) {
             //走棋
+//            logStep(selectId,id, col, row);
+            //记录走棋
+            saveStep(selectId, id,col, row, mPassSteps);
+            //qDebug()<<"add step  "<<"moveId:"<<selectId<<"killId:"<<id<<"col:"<<col<<"row:"<<row;
+
             killStone(id);
             moveStone(selectId, col, row);
             selectId = -1;
@@ -562,11 +612,21 @@ void MyWidget::click(int id, int col, int row) {
     }
 }
 void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
+    QPoint pt = event->pos();
+
+    if(mBackRect.contains(pt)){
+        emit back_signal();
+        return;
+    }
+    if(mRepentanceRect.contains(pt)){
+        emit repentance_signal(1);
+        return;
+    }
+
     if (m_winner != 0) {
         QWidget::mouseReleaseEvent(event);
         return;
     }
-    QPoint pt = event->pos();
     int row, col;
     bool bRet = getColRow(pt, col, row);
     if (!bRet) return;
@@ -578,27 +638,6 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
 
     click(clickId, col, row);
-    //    if (selectId == -1) {
-    //        if (clickId != -1) {
-    //            // if (canSelect()) {
-
-    //            //没轮到红棋走，但点的是红棋，轮到红棋走，但点的不是红棋 --> 退出
-    //            if ((bTranRed && _s[clickId]._red) || (!bTranRed && !_s[clickId]._red)) {
-    //                selectId = clickId;
-    //                update();
-    //            }
-    //        }
-    //    } else {
-
-    //        if (canMove(selectId, col, row, clickId)) {
-    //            //走棋
-    //            killStone(clickId);
-    //            moveStone(selectId, col, row);
-    //            selectId = -1;
-    //            update();
-    //            judgeGameOver();
-    //        }
-    //    }
 }
 
 void MyWidget::killStone(int killId) {
@@ -618,4 +657,28 @@ void MyWidget::moveStone(int moveId, int col, int row) {
     _s[moveId]._row = row;
     _s[moveId]._col = col;
     bTranRed = !bTranRed;
+}
+void MyWidget::saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps) {
+    // getColRow() ;
+    int row1 = _s[moveId]._row;
+    int col1 = _s[moveId]._col;
+    Step *step = new Step;
+    step->_colFrom = col1;
+    step->_rowFrom = row1;
+    step->_rowTo = row;
+    step->_colTo = col;
+    step->_killid = killId;
+    step->_moveid = moveId;
+
+    steps.append(step);
+
+}
+
+//void MyWidget::logStep(int moveId, int killId, int col, int row)
+//{
+//}
+
+void MyWidget::unfakeMove(Step *step) {
+    reliveStone(step->_killid);
+    moveStone(step->_moveid, step->_colFrom, step->_rowFrom);
 }
