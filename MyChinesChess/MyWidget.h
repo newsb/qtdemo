@@ -5,9 +5,10 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QWidget>
+#include "Step.h"
+
 class MyWidget : public QWidget {
     Q_OBJECT
-
   public:
     MyWidget(QWidget *parent = nullptr);
     ~MyWidget();
@@ -15,13 +16,18 @@ class MyWidget : public QWidget {
     const int COL_COUNT = 8;
     const int ROW_COUNT = 9;
 
+    const int PADDING_LEFT = 50;
+    const int PADDING_RIGHT = 150;
+    const int PADDING_TOP = 20;
+    const int PADDING_BOTTOM = 20;
+
     void init(bool bRedSide);
     //当前该红棋走了
     bool bTranRed;
     //棋子半径
-    int _r;
+    double _r;
     //棋盘格子高、宽
-    int mColumnWidth, mRowHeight;
+    double mColumnWidth, mRowHeight;
     MyStone _s[32];
     int selectId = -1; //选择的棋子id
     int m_winner = 0;  // 0:未结束； 1：红棋赢；2：黑旗赢
@@ -34,7 +40,7 @@ class MyWidget : public QWidget {
     bool isBottomSide(int id);
 
     //根据棋子id，算出它的中心坐标
-    QPoint center(int id);
+    QPointF center(int id);
     //根据坐标，计算行列
     bool getColRow(QPoint pt, int &col, int &row);
     //获取col、row位置的棋子
@@ -50,7 +56,14 @@ class MyWidget : public QWidget {
     void judgeGameOver();
     bool canMove(int moveId, int col, int row, int killId);
 
+protected:
+    void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
+    QVector<Step *>  mPassSteps;
+//    void logStep(int moveId, int killId, int col, int row);
+    void unfakeMove(Step *step);
+    void repentanceStep(int backCount);
   private:
+      QRect mBackRect,mRepentanceRect;
     void drawBoard(QPainter &painter);
     //画棋子
     void drawStone(QPainter &painter, int id);
@@ -66,5 +79,8 @@ class MyWidget : public QWidget {
   protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
+ signals:
+     void back_signal();
+     void repentance_signal(int backCount);
 };
 #endif // MYWIDGET_H

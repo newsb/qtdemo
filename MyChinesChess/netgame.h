@@ -12,7 +12,6 @@ class NetGame : public MyWidget {
     QTcpServer *_server;
     QTcpSocket *_socket;
 
-    // MyWidget interface
   protected:
     virtual void click(int id, int col, int row) override;
   public slots:

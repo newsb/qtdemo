@@ -14,10 +14,9 @@ class SingleGame : public MyWidget {
     //    virtual void mouseReleaseEvent(QMouseEvent *event) override;
     Step *getBestMove();
     void getAllPossibleStep(QVector<Step *> &steps);
-    void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
+
     void fakeMove(Step *step);
-    void unfakeMove(Step *step);
-    int calcScore();
+    int calcScore(bool isMyself);
     int getMinScore(int level, int currentMaxScore);
     int getMaxScore(int level, int currentMinScore);
 

@@ -15,6 +15,8 @@ void MyStone::init(int id) {
                  {3, 0, MyStone::BING},  {3, 2, MyStone::BING},  {3, 4, MyStone::BING},
                  {3, 6, MyStone::BING},  {3, 8, MyStone::BING}};
 
+
+
     _id = id;
     _dead = false;
     _red = id < 16;
@@ -76,3 +78,4 @@ void MyStone::rotate() {
     this->_col = 8 - this->_col;
     this->_row = 9 - this->_row;
 }
+

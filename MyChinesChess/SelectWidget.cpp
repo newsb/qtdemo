@@ -44,6 +44,10 @@ void SelectWidget::initBtns() {
     connect(btnBase, &QPushButton::clicked, [=]() {
         _borad = new MyWidget();
 
+        connect(_borad,&MyWidget::back_signal,[=](){
+            _borad->hide();
+            this->show();
+        });
         _borad->show();
         this->hide();
     });
@@ -54,7 +58,10 @@ void SelectWidget::initBtns() {
     btnSingle->setGeometry(22, 66, 88, 44);
     connect(btnSingle, &QPushButton::clicked, [=]() {
         _borad = new SingleGame();
-
+        connect(_borad,&SingleGame::back_signal,[=](){
+            _borad->hide();
+            this->show();
+        });
         _borad->show();
         this->hide();
     });
@@ -71,6 +78,10 @@ void SelectWidget::initBtns() {
             bServer = true;
         }
         _borad = new NetGame(bServer);
+        connect(_borad,&NetGame::back_signal,[=](){
+            _borad->hide();
+            this->show();
+        });
         _borad->show();
         this->hide();
     });
