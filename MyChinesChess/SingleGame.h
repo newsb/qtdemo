@@ -16,7 +16,7 @@ class SingleGame : public MyWidget {
     void getAllPossibleStep(QVector<Step *> &steps);
 
     void fakeMove(Step *step);
-    int calcScore(bool isMyself);
+    int calcScore();
     int getMinScore(int level, int currentMaxScore);
     int getMaxScore(int level, int currentMinScore);
 

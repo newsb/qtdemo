@@ -6,16 +6,14 @@ void MyStone::init(int id) {
     struct {
         int row, col;
         MyStone::TYPE type;
-    } pos[16] = {{0, 0, MyStone::CHE},   {0, 1, MyStone::MA},    {0, 2, MyStone::XIANG},
-                 {0, 3, MyStone::SHI},   {0, 4, MyStone::JIANG}, {0, 5, MyStone::SHI},
-                 {0, 6, MyStone::XIANG}, {0, 7, MyStone::MA},    {0, 8, MyStone::CHE},
+    } pos[16] = {
+     {0,0,MyStone::CHE},{0,1,MyStone::MA},{0,2,MyStone::XIANG},{0,3,MyStone::SHI},{0,4,MyStone::JIANG},
+     {0, 5, MyStone::SHI},{0, 6, MyStone::XIANG}, {0, 7, MyStone::MA},    {0, 8, MyStone::CHE},
+    //pao=9,10
+     {2, 1, MyStone::PAO},   {2, 7, MyStone::PAO},
 
-                 {2, 1, MyStone::PAO},   {2, 7, MyStone::PAO},
-
-                 {3, 0, MyStone::BING},  {3, 2, MyStone::BING},  {3, 4, MyStone::BING},
-                 {3, 6, MyStone::BING},  {3, 8, MyStone::BING}};
-
-
+     {3, 0, MyStone::BING},  {3, 2, MyStone::BING},  {3, 4, MyStone::BING},
+     {3, 6, MyStone::BING},  {3, 8, MyStone::BING}};
 
     _id = id;
     _dead = false;

@@ -14,6 +14,10 @@
 MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent) {
     resize(600, 600);
+    bMouseOnBtn=false;
+    bMouseOnBtn1=false;
+    // 所以想要实现mouseMoveEvent,若是setMouseTrack(true),直接可以得到监听事件。若是setMouseTrack(false),只有鼠标按下才会有mouseMove监听事件响应。
+    setMouseTracking(true);
     //隐藏form标题栏
     // setWindowFlags(Qt::FramelessWindowHint);
 
@@ -22,30 +26,34 @@ MyWidget::MyWidget(QWidget *parent)
     //   }
     init(true);
 
-#if 0
-    for (int i = 0; i < 32; ++i) {
-        if (i != 20 && i != 5) _s[i]._dead = true;
-    }
+#if 1
+//    for (int i = 0; i < 32; ++i) {
+//        if(_s[i]._red&&_s[i]._type==MyStone::BING){
+//           _s[i]._col
+//        }
+
+        //if (i != 20 && i != 5) _s[i]._dead = true;
+//    }
+    //13=红兵，中心的
+    _s[13]._col=4;
+    _s[13]._row=1;
+
+//    _s[13 ]._dead=true;
+    _s[13+16]._dead=true;
+
+//    _s[9+16]._col=4;
+
+    //马
+//    _s[1+16]._col=2;
+//    _s[1+16]._row=2;
+
 #endif
 
     mPassSteps.clear();
 
     connect(this,&MyWidget::repentance_signal,&MyWidget::repentanceStep);
 }
-void MyWidget::repentanceStep(int backCount){
-    while (backCount>0){
-        if(mPassSteps.isEmpty() ) return ;
-        Step *step = mPassSteps.back();
-        unfakeMove(step);
-        update();
-        qDebug()<<"悔棋。"<<_s[step->_moveid].getText()
-                 <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
-                 <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo;
-        mPassSteps.pop_back();//mPassSteps.removeLast();
-        delete step;
-        backCount--;
-    }
-}
+
 void MyWidget::init(bool bRedSide) {
     for (int i = 0; i < 32; ++i) {
         _s[i].init(i);
@@ -62,6 +70,21 @@ void MyWidget::init(bool bRedSide) {
     update();
 }
 
+void MyWidget::repentanceStep(int backCount){
+    while (backCount>0){
+        if(mPassSteps.isEmpty() ) return ;
+        Step *step = mPassSteps.back();
+        unfakeMove(step);
+        update();
+        qDebug()<<"悔棋。"<<_s[step->_moveid].getText()
+                 <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
+                 <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo;
+        mPassSteps.pop_back();//mPassSteps.removeLast();
+        delete step;
+        backCount--;
+    }
+}
+
 MyWidget::~MyWidget() {}
 
 void MyWidget::paintEvent(QPaintEvent *) {
@@ -73,9 +96,9 @@ void MyWidget::paintEvent(QPaintEvent *) {
 
     QPainter p(this);
     //棋盘背景图
-    QPixmap pix(":/res/bg.jpg");
-    pix=pix.scaled(this->width(),this->height());
-    p.drawPixmap(0,0,pix);
+//    QPixmap pix(":/res/bg.jpg");
+//    pix=pix.scaled(this->width(),this->height());
+//    p.drawPixmap(0,0,pix);
 
     drawBoard(p);
 
@@ -86,25 +109,44 @@ void MyWidget::paintEvent(QPaintEvent *) {
 
     //绘制输赢结果。
     if (m_winner == 1 || m_winner == 2) {
-        QRect rect(PADDING_LEFT + colw * 3, PADDING_TOP + rowh * 5, PADDING_LEFT + colw * 4, +PADDING_TOP + rowh);
+        QRect rect(PADDING_LEFT + colw * 3, PADDING_TOP + rowh * 5,  colw * 4,  rowh);
         p.setPen(Qt::red);
         p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
     }
     //绘制操作按钮
+    p.save();
+    if(bMouseOnBtn1){
+        p.setBrush(QBrush(Qt::white));
+    }else{
+        p.setBrush(Qt::BrushStyle::NoBrush);
+    }
     mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
                PADDING_RIGHT-20,25);
     p.drawRect(mBackRect);
     p.setPen(Qt::red);
     p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
 
+    if(bMouseOnBtn){
+        p.setBrush(QBrush(Qt::white));
+    }else{
+        p.setBrush(Qt::BrushStyle::NoBrush);
+    }
     mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
                 PADDING_RIGHT-20,25);
     p.drawRect(mRepentanceRect);
     p.setPen(Qt::red);
     p.drawText(mRepentanceRect, "Repentance", QTextOption(Qt::AlignCenter));
 
+    p.restore();
 }
 
+void MyWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    bMouseOnBtn=(mRepentanceRect.contains( event->pos()));
+    update(mRepentanceRect);
+    bMouseOnBtn1=(mBackRect.contains( event->pos()));
+    update(mBackRect);
+}
 QPainterPath MyWidget::getPaoBingPostionPath(QPoint &point, int half) const {
     QPainterPath path;
     if (half == 0 || half == 1) {
@@ -158,9 +200,9 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     painter.drawEllipse(c, _r, _r);
 
     /* painter.setPen(Qt::green);
-     painter.drawEllipse(c, _r - 5, _r - 5);
-*/
- //todo :悔棋
+         painter.drawEllipse(c, _r - 5, _r - 5);
+    */
+
     painter.setPen(Qt::black);
     if (_s[id]._red) {
         painter.setPen(Qt::red);
@@ -497,25 +539,22 @@ bool MyWidget::canMoveBING(int moveId, int col, int row, int) {
     return d == 1 || d == 10;
 }
 
-void MyWidget::judgeGameOver() {
-    for (int i = 0; i < 32; i++) {
-        if (_s[i]._type == MyStone::JIANG && _s[i]._dead) {
-            if (_s[i]._red) {
-                m_winner = 2;
-            } else {
-                m_winner = 1;
-            }
-            break;
-        }
+//是否输了，bRed=红棋
+bool MyWidget::isLost(bool bRed){
+    if(isJIANGDead(bRed)){
+        return true;
     }
-    if (m_winner != 0) {
-        qDebug() << "game over , m_winner:" << m_winner;
-        return;
+    if(cannotMoveAnyStone(bRed)){
+        return true;
     }
+    return false;
+}
+//bRed=true:判断红棋，false：判断黑棋
+bool MyWidget::cannotMoveAnyStone(bool bRed){
     //该红走的时候：红棋都不能走，红棋输
     //该黑走的时候：黑棋都不能走，黑棋输
     int min = 16, max = 32;
-    if (bTranRed) {
+    if (bRed) {
         min = 0, max = 16;
     }
 
@@ -525,25 +564,48 @@ void MyWidget::judgeGameOver() {
         for (int row = 0; row <= 9; row++) {
             for (int col = 0; col <= 8; col++) {
                 int killId = getStoneIdAt(col, row);
-
+                //杀死自己的棋子
                 if (killId != -1) {
-                    if (_s[i]._red == _s[killId]._red) continue;
+                    if (_s[i]._red == _s[killId]._red)
+                        continue;
                 }
 
                 if (canMove(i, col, row, killId)) {
-                    return;
+                    return false;
                 }
             }
         }
     }
-    if (bTranRed) { //红棋没有可走的了，黑旗赢
-        m_winner = 2;
-        qDebug() << "game over , m_winner:" << m_winner;
-    } else {
-        m_winner = 1;
-        qDebug() << "game over , m_winner:" << m_winner;
+    return true;
+
+}
+
+void MyWidget::iAmLost(bool bRed)
+{
+    m_winner=bRed?2:1;
+}
+bool MyWidget::isJIANGDead(bool bRed ){
+    int min = 16, max = 32;
+    if (bRed) {
+        min = 0, max = 16;
     }
-    return;
+    for (int i = min; i < max; i++) {
+        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
+            return true;
+    }
+    return false;
+}
+
+int MyWidget::judgeGameOver() {
+    if (m_winner!=0)return m_winner;
+
+    if (isLost(true)){
+        return 2;
+    }else if (isLost(false)){
+         return 1;
+    }
+
+    return 0;
 }
 bool MyWidget::canMoveCHE(int moveId, int col, int row, int) {
     // 走直线，中间没有棋子
@@ -607,7 +669,7 @@ void MyWidget::click(int id, int col, int row) {
             moveStone(selectId, col, row);
             selectId = -1;
             update();
-            judgeGameOver();
+            m_winner=judgeGameOver();
         }
     }
 }
@@ -682,3 +744,4 @@ void MyWidget::unfakeMove(Step *step) {
     reliveStone(step->_killid);
     moveStone(step->_moveid, step->_colFrom, step->_rowFrom);
 }
+

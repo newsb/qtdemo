@@ -16,7 +16,7 @@ class MyWidget : public QWidget {
     const int COL_COUNT = 8;
     const int ROW_COUNT = 9;
 
-    const int PADDING_LEFT = 50;
+    const int PADDING_LEFT = 20;
     const int PADDING_RIGHT = 150;
     const int PADDING_TOP = 20;
     const int PADDING_BOTTOM = 20;
@@ -53,7 +53,7 @@ class MyWidget : public QWidget {
     int countStoneAtCol(int row, int col1, int col2);
     int countStoneAtRow(int col, int row1, int row2);
     bool canSelect();
-    void judgeGameOver();
+    int judgeGameOver();
     bool canMove(int moveId, int col, int row, int killId);
 
 protected:
@@ -62,8 +62,15 @@ protected:
 //    void logStep(int moveId, int killId, int col, int row);
     void unfakeMove(Step *step);
     void repentanceStep(int backCount);
+
+    bool isLost(bool bRed);
+    //bRed=true:判断红棋，false：判断黑棋
+    bool isJIANGDead(bool bRed);
+    bool cannotMoveAnyStone(bool bRed);
+    void iAmLost(bool bRed);
   private:
       QRect mBackRect,mRepentanceRect;
+      bool bMouseOnBtn,bMouseOnBtn1;
     void drawBoard(QPainter &painter);
     //画棋子
     void drawStone(QPainter &painter, int id);
@@ -79,8 +86,10 @@ protected:
   protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
  signals:
      void back_signal();
      void repentance_signal(int backCount);
+
 };
 #endif // MYWIDGET_H

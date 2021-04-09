@@ -5,7 +5,15 @@
 SingleGame::SingleGame() {}
 
 int SingleGame::getMaxScore(int level, int currentMinScore) {
-    if (level == 0) return calcScore(true);
+    if (level == 0) return calcScore( );
+
+    if(isLost(false)){//：如果黑棋（机器自己）死了，返回最低分
+        return -100000;
+        qDebug() << "getMaxScore isLost false "  ;
+    }else if(isLost(true)){//：如果红棋（对方）死了，返回最高分
+        return 100000;
+        qDebug() << "getMaxScore isLost true "  ;
+    }
 
     QVector<Step *> steps;
     getAllPossibleStep(steps);
@@ -17,9 +25,12 @@ int SingleGame::getMaxScore(int level, int currentMinScore) {
         steps.removeLast();
 
         fakeMove(step);
-        int score = getMinScore(level - 1, maxScore);
+        int   score;
+
+          score = getMinScore(level - 1, maxScore);
+
         unfakeMove(step);
-//#if 0
+#if 1
         if (score >= currentMinScore) {
             //清空steps
             while (steps.count()) {
@@ -29,7 +40,7 @@ int SingleGame::getMaxScore(int level, int currentMinScore) {
             }
             return score;
         }
-//#endif
+#endif
         if (score > maxScore) {
             maxScore = score;
 //            qDebug() << "getMaxScore find better step , Score:" << score<<";_moveid:"
@@ -44,7 +55,14 @@ int SingleGame::getMaxScore(int level, int currentMinScore) {
 }
 
 int SingleGame::getMinScore(int level, int currentMaxScore) {
-    if (level == 0) return calcScore(false);
+    if (level == 0) return calcScore( );
+    if(isLost(false)){//：如果黑棋（对方、机器）死了，返回最高分
+        return 100000;
+        qDebug() << "getMinScore isLost false "  ;
+    }else if(isLost(true)){//：如果红棋（自己）死了，返回最低分
+        return -100000;
+        qDebug() << "getMinScore isLost true "  ;
+    }
 
     QVector<Step *> steps;
     getAllPossibleStep(steps);
@@ -56,10 +74,11 @@ int SingleGame::getMinScore(int level, int currentMaxScore) {
         steps.removeLast();
 
         fakeMove(step);
-        int score = getMaxScore(level - 1, minScore);
+        int   score  = getMaxScore(level - 1, minScore);
+
         unfakeMove(step);
 
-//#if 0
+#if 1
         if (score <= currentMaxScore) {
             //清空steps
             while (steps.count()) {
@@ -69,7 +88,7 @@ int SingleGame::getMinScore(int level, int currentMaxScore) {
             }
             return score;
         }
-//#endif
+#endif
         if (score < minScore) {
             minScore = score;
 //            qDebug() << "getMinScore find better step , Score:" << score<<";_moveid:"
@@ -98,22 +117,32 @@ Step *SingleGame::getBestMove() {
         steps.removeLast();
 
         fakeMove(step);
-        int score = getMinScore(_level, maxScore);
-        unfakeMove(step);
-
-        if (score > maxScore) {
-            maxScore = score;
-            qDebug() << "getBestMove find better step , Score:" << score<<";_moveid:"
-                <<_s[step->_moveid].getText()
-                <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
-                     <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo
-                     <<"killid:"<<step->_killid;
+        int   score;
+        if(isLost(true)){//：如果红棋（对方）死了，返回最高分
+            score= 100000;
             if (ret != nullptr) delete ret;
-
             ret = step;
-        } else {
-            delete step;
+            unfakeMove(step);
+            qDebug() << "getBestMove isLost true "  ;
+        }else{
+            score = getMinScore(_level, maxScore);
+            if (score > maxScore) {
+                maxScore = score;
+                qDebug() << "getBestMove find better step , Score:" << score<<";_moveid:"
+                         <<_s[step->_moveid].getText()
+                         <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
+                         <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo
+                         <<"killid:"<<step->_killid;
+                if (ret != nullptr) delete ret;
+
+                ret = step;
+            } else {
+                delete step;
+            }
+            unfakeMove(step);
         }
+
+
     }
     return ret;
 }
@@ -149,8 +178,7 @@ void SingleGame::fakeMove(Step *step) {
     moveStone(step->_moveid, step->_colTo, step->_rowTo);
 }
 
-
-int SingleGame::calcScore(bool isMyself) {
+int SingleGame::calcScore() {
 
     //    enum TYPE         { CHE, MA, XIANG, SHI, JIANG, BING, PAO };
     static int chessScore[] = {100, 50, 20, 20, 1550, 10, 50};
@@ -158,19 +186,18 @@ int SingleGame::calcScore(bool isMyself) {
 
     for (int i = 0; i < 16; i++) {
         if (_s[i]._dead){
-            //该黑棋走的时候
-            if (isMyself){
-                //如果红棋（对方）的将死了，分数返回最高
-                if (_s[i]._type==MyStone::JIANG){
-                    return 100000;
-                }
-            }else{//该红棋走的时候
-                //如果红棋（己方）的将死了，分数返回最低
-                if (_s[i]._type==MyStone::JIANG){
-                    return -100000;
-                }
-
-            }
+//            //该黑棋走的时候
+//            if (isMyself){
+//                //如果红棋（对方）的将死了，分数返回最高
+//                if (_s[i]._type==MyStone::JIANG){
+//                    return 100000;
+//                }
+//            }else{//该红棋走的时候
+//                //如果红棋（己方）的将死了，分数返回最低
+//                if (_s[i]._type==MyStone::JIANG){
+//                    return -100000;
+//                }
+//            }
             continue;
         }
         redTotalScore += chessScore[_s[i]._type];
@@ -178,19 +205,18 @@ int SingleGame::calcScore(bool isMyself) {
     for (int i = 16; i < 32; i++) {
 
         if (_s[i]._dead){
-            //该黑棋走的时候
-            if (isMyself){
-                //如果自己（黑旗）的将死了，分数返回最低
-                if (_s[i]._type==MyStone::JIANG){
-                    return -100000;
-                }
-            }else{//该红棋走的时候
-                //如果对方（黑旗）的将死了，分数返回最高
-                if (_s[i]._type==MyStone::JIANG){
-                    return 100000;
-                }
-
-            }
+//            //该黑棋走的时候
+//            if (isMyself){
+//                //如果自己（黑旗）的将死了，分数返回最低
+//                if (_s[i]._type==MyStone::JIANG){
+//                    return -100000;
+//                }
+//            }else{//该红棋走的时候
+//                //如果对方（黑旗）的将死了，分数返回最高
+//                if (_s[i]._type==MyStone::JIANG){
+//                    return 100000;
+//                }
+//            }
             continue;
         }
         blackTotalScore += chessScore[_s[i]._type];
@@ -206,16 +232,20 @@ void SingleGame::click(int id, int col, int row) {
 
         QTimer::singleShot(100, [=]() {
             Step *step = getBestMove();
-            //电脑走棋
-            //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
-            //记录走棋
-            saveStep(step->_moveid, step->_killid, step->_colTo, step->_rowTo, mPassSteps);
-            //qDebug()<<"add step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid<<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+            if(step==nullptr){
+                iAmLost(false);
+            }else{
+                //电脑走棋
+                //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
+                //记录走棋
+                saveStep(step->_moveid, step->_killid, step->_colTo, step->_rowTo, mPassSteps);
+                //qDebug()<<"add step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid<<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
 
-            killStone(step->_killid);
-            moveStone(step->_moveid, step->_colTo, step->_rowTo);
-            delete step;
-            judgeGameOver();
+                killStone(step->_killid);
+                moveStone(step->_moveid, step->_colTo, step->_rowTo);
+                delete step;
+            }
+            m_winner=judgeGameOver();
             update();
         });
     }
