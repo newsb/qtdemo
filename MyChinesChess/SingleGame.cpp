@@ -147,6 +147,17 @@ Step *SingleGame::getBestMove() {
     return ret;
 }
 
+void SingleGame::getAPossibleStep(int stoneId,int col,int row,QVector<Step *> &steps){
+
+    int killId = getStoneIdAt(col, row);
+    if (killId != -1&&_s[stoneId]._red == _s[killId]._red) {
+
+    }else{
+        if (canMove(stoneId, col, row, killId)) {
+            saveStep(stoneId, killId, col, row, steps);
+        }
+    }
+}
 void SingleGame::getAllPossibleStep(QVector<Step *> &steps) {
     int min = 16, max = 32;
     if (bTranRed) {
@@ -155,17 +166,53 @@ void SingleGame::getAllPossibleStep(QVector<Step *> &steps) {
     for (int i = min; i < max; i++) {
         if (_s[i]._dead) continue;
 
-        for (int row = 0; row <= 9; row++) {
-            for (int col = 0; col <= 8; col++) {
-                int killId = getStoneIdAt(col, row);
-
-                if (killId != -1) {//
-                    if (_s[i]._red == _s[killId]._red) continue;
+        int startRow=0,endRow=9,startCol=0,endCol=8;
+        switch (_s[i]._type) {
+            case MyStone::BING:{//兵、只检查前后左右4个位置
+                startRow=_s[i]._row-1,endRow=_s[i]._row+1,startCol=_s[i]._col-1,endCol=_s[i]._col+1;
+                break;
+            }
+            case  MyStone::CHE:
+            case  MyStone::PAO:{//炮、只检查2直线上的位置
+                startRow=_s[i]._row,endRow=_s[i]._row,startCol=0,endCol=8;
+                for (int row = startRow; row <= endRow; row++) {
+                    for (int col = startCol; col <= endCol; col++) {
+                        getAPossibleStep(i,col,row,steps);
+                    }
                 }
-
-                if (canMove(i, col, row, killId)) {
-                    saveStep(i, killId, col, row, steps);
+                startRow=0,endRow=9,startCol=_s[i]._col,endCol=_s[i]._col;
+                break;
+            }
+            case  MyStone::MA:{//
+                break;
+            }
+            case  MyStone::XIANG:{//
+                startRow=-1,endRow=-1,startCol=-1,endCol=-1;
+                if(isBottomSide(i)){
+                    // [[0,2] [0,6] ,[2,0],[2,4] [2,8] ,[4,2],4-6]
+                    // [9,2] [9,6] [7,0],[7,4] [7,8] ,  5,2  ,5-6
+                    static int  XIANG_POS[14][2]={{0,2},{0,6},{2,0},{2,4},{2,8},{4,2},{4,6},
+                                           {9,2},{9,6},{7,0},{7,4},{7,8},{5,2},{5-6} };
+                    for (int c=0;c<14;c++) {
+                       getAPossibleStep(i, XIANG_POS[c][1],XIANG_POS[c][0],steps);
+                    }
                 }
+                break;
+            }
+            case  MyStone::SHI:
+            case  MyStone::JIANG:{//九宫格内
+                if(isBottomSide(i)){
+                    startRow=7,endRow=9,startCol=3,endCol=5;
+                }else{
+                    startRow=0,endRow=2,startCol=3,endCol=5;
+                }
+                break;
+            }
+        }
+
+        for (int row = startRow; row <= endRow; row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                getAPossibleStep(i,col,row,steps);
             }
         }
     }

@@ -14,6 +14,7 @@ class SingleGame : public MyWidget {
     //    virtual void mouseReleaseEvent(QMouseEvent *event) override;
     Step *getBestMove();
     void getAllPossibleStep(QVector<Step *> &steps);
+    void getAPossibleStep(int stoneId,int col,int row,QVector<Step *> &steps);
 
     void fakeMove(Step *step);
     int calcScore();
