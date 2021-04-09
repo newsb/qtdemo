@@ -16,6 +16,7 @@ MyWidget::MyWidget(QWidget *parent)
     resize(600, 600);
     bMouseOnBtn=false;
     bMouseOnBtn1=false;
+    mUseTime=0;
     // 所以想要实现mouseMoveEvent,若是setMouseTrack(true),直接可以得到监听事件。若是setMouseTrack(false),只有鼠标按下才会有mouseMove监听事件响应。
     setMouseTracking(true);
     //隐藏form标题栏
@@ -52,8 +53,17 @@ MyWidget::MyWidget(QWidget *parent)
     mPassSteps.clear();
 
     connect(this,&MyWidget::repentance_signal,&MyWidget::repentanceStep);
+
+    mUseTimeId=startTimer(1000);
 }
 
+void MyWidget::timerEvent(QTimerEvent *event)
+{
+    if(mUseTimeId==event->timerId()){
+        mUseTime++;
+        update(mUseTimeRect);
+    }
+}
 void MyWidget::init(bool bRedSide) {
     for (int i = 0; i < 32; ++i) {
         _s[i].init(i);
@@ -75,6 +85,7 @@ void MyWidget::repentanceStep(int backCount){
         if(mPassSteps.isEmpty() ) return ;
         Step *step = mPassSteps.back();
         unfakeMove(step);
+        mUseTime=0 ;
         update();
         qDebug()<<"悔棋。"<<_s[step->_moveid].getText()
                  <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
@@ -108,20 +119,20 @@ void MyWidget::paintEvent(QPaintEvent *) {
     }
 
     //绘制输赢结果。
-    if (m_winner == 1 || m_winner == 2) {
-        QRect rect(PADDING_LEFT + colw * 3, PADDING_TOP + rowh * 5,  colw * 4,  rowh);
-        p.setPen(Qt::red);
-        p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
-    }
+    drawGameResult(p);
     //绘制操作按钮
+    drawGameBtns(p);
+}
+
+void MyWidget::drawGameBtns(QPainter &p ){
     p.save();
     if(bMouseOnBtn1){
         p.setBrush(QBrush(Qt::white));
     }else{
         p.setBrush(Qt::BrushStyle::NoBrush);
-    }
+    }/*
     mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
-               PADDING_RIGHT-20,25);
+                      PADDING_RIGHT-20,25);*/
     p.drawRect(mBackRect);
     p.setPen(Qt::red);
     p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
@@ -131,13 +142,38 @@ void MyWidget::paintEvent(QPaintEvent *) {
     }else{
         p.setBrush(Qt::BrushStyle::NoBrush);
     }
-    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
-                PADDING_RIGHT-20,25);
+//    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
+//                            PADDING_RIGHT-20,25);
     p.drawRect(mRepentanceRect);
     p.setPen(Qt::red);
     p.drawText(mRepentanceRect, "Repentance", QTextOption(Qt::AlignCenter));
 
+//    mUseTimeRect=QRect(this->width()-PADDING_RIGHT+10,this->height()-PADDING_BOTTOM-55,
+//                         PADDING_RIGHT-20,35);
+    p.drawRect(mUseTimeRect);
+    p.setPen(Qt::red);
+    p.drawText(mUseTimeRect,QString("Used:%1 s").arg(mUseTime), QTextOption(Qt::AlignCenter));
+
     p.restore();
+}
+
+void MyWidget::resizeEvent(QResizeEvent *event)
+{
+    event->size();
+    mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
+                      PADDING_RIGHT-20,25);
+    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
+                            PADDING_RIGHT-20,25);
+    mUseTimeRect=QRect(this->width()-PADDING_RIGHT+10,this->height()-PADDING_BOTTOM-55,
+                         PADDING_RIGHT-20,35);
+}
+
+void MyWidget::drawGameResult(QPainter &p ){
+    if (m_winner == 1 || m_winner == 2) {
+        QRect rect(PADDING_LEFT + mColumnWidth * 3, PADDING_TOP + mRowHeight * 5,  mColumnWidth * 4,  mRowHeight);
+        p.setPen(Qt::red);
+        p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
+    }
 }
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event)
@@ -668,6 +704,7 @@ void MyWidget::click(int id, int col, int row) {
             killStone(id);
             moveStone(selectId, col, row);
             selectId = -1;
+            mUseTime=0;
             update();
             m_winner=judgeGameOver();
         }
@@ -744,4 +781,7 @@ void MyWidget::unfakeMove(Step *step) {
     reliveStone(step->_killid);
     moveStone(step->_moveid, step->_colFrom, step->_rowFrom);
 }
+
+
+
 

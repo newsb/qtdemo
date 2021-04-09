@@ -229,7 +229,7 @@ void SingleGame::click(int id, int col, int row) {
     MyWidget::click(id, col, row);
     //电脑执黑,该电脑走了
     if (!bTranRed && m_winner == 0) {
-
+        //todo :机器计算移到线程里
         QTimer::singleShot(100, [=]() {
             Step *step = getBestMove();
             if(step==nullptr){
@@ -243,6 +243,7 @@ void SingleGame::click(int id, int col, int row) {
 
                 killStone(step->_killid);
                 moveStone(step->_moveid, step->_colTo, step->_rowTo);
+                mUseTime=0;
                 delete step;
             }
             m_winner=judgeGameOver();

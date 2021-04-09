@@ -57,6 +57,7 @@ class MyWidget : public QWidget {
     bool canMove(int moveId, int col, int row, int killId);
 
 protected:
+    int mUseTime;
     void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
     QVector<Step *>  mPassSteps;
 //    void logStep(int moveId, int killId, int col, int row);
@@ -69,11 +70,14 @@ protected:
     bool cannotMoveAnyStone(bool bRed);
     void iAmLost(bool bRed);
   private:
-      QRect mBackRect,mRepentanceRect;
+      QRect mBackRect,mRepentanceRect,mUseTimeRect;
       bool bMouseOnBtn,bMouseOnBtn1;
+      int mUseTimeId;
     void drawBoard(QPainter &painter);
     //画棋子
     void drawStone(QPainter &painter, int id);
+    void drawGameResult(QPainter &painter);
+    void drawGameBtns(QPainter &painter);
     bool canMoveCHE(int moveId, int col, int row, int killId);
     bool canMoveMA(int moveId, int col, int row, int killId);
     bool canMoveXIANG(int moveId, int col, int row, int killId);
@@ -82,14 +86,18 @@ protected:
     bool canMovePAO(int moveId, int col, int row, int killId);
     bool canMoveBING(int moveId, int col, int row, int killId);
 
-    // QWidget interface
-  protected:
+
+    // QObject interface
+protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
     virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void timerEvent(QTimerEvent *event) override;
  signals:
      void back_signal();
      void repentance_signal(int backCount);
+
 
 };
 #endif // MYWIDGET_H
