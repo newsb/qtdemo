@@ -22,6 +22,7 @@ SOURCES += \
     main.cpp \
     MyWidget.cpp \
     mystone.cpp \
+    mytask.cpp \
     netgame.cpp
 
 HEADERS += \
@@ -30,6 +31,7 @@ HEADERS += \
     SingleGame.h \
     Step.h \
     mystone.h \
+    mytask.h \
     netgame.h
 
 # Default rules for deployment.
