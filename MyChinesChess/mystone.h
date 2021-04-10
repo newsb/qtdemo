@@ -13,9 +13,10 @@ class MyStone {
     TYPE _type;
 
     void init(int id);
-    QString getText();
+    QString getText()const;
     void rotate();
-    bool isSameColor(MyStone &stone);
+//    bool isSameColor(MyStone &stone)const;
+
 };
 
 #endif // MYSTONE_H

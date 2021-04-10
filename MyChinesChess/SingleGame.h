@@ -3,11 +3,12 @@
 #include "MyWidget.h"
 #include "Step.h"
 #include <QVector>
-
+#include <QMutex>
 class SingleGame : public MyWidget {
+    Q_OBJECT
   public:
-    SingleGame();
-
+    SingleGame(QWidget *parent = nullptr);
+~SingleGame();
     // QWidget interface
   protected:
     int _level = 4;
@@ -21,9 +22,20 @@ class SingleGame : public MyWidget {
     int getMinScore(int level, int currentMaxScore);
     int getMaxScore(int level, int currentMinScore);
 
-    // MyWidget interface
+    bool isComputerMoving=false;
+    void startComputerMove();
   protected:
     virtual void click(int id, int col, int row) override;
+    virtual void drawStone(QPainter &painter, int id) override;
+public slots:
+//    QMutex mutex;
+    void updateComputerMove(Step *step);
+signals:
+    void computerMoveFinished(Step *step);
+public:
+    virtual QPointF center(int id )override;
+    // MyWidget interface
+private:
 };
 
 #endif // SINGLEGAME_H

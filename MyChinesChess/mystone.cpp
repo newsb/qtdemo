@@ -30,7 +30,7 @@ void MyStone::init(int id) {
     }
 }
 
-QString MyStone::getText() {
+QString MyStone::getText()const {
     switch (_type) {
         case CHE:
             return "車";

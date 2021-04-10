@@ -1,9 +1,17 @@
 #include "SingleGame.h"
 #include <QDebug>
 #include <QTimer>
+#include <QtConcurrent>
+SingleGame::SingleGame(QWidget *parent)
+    : MyWidget(parent) {
 
-SingleGame::SingleGame() {}
+    connect(this,&SingleGame::computerMoveFinished,this,&SingleGame::updateComputerMove,Qt::QueuedConnection);
 
+}
+
+SingleGame::~SingleGame(){
+
+}
 int SingleGame::getMaxScore(int level, int currentMinScore) {
     if (level == 0) return calcScore( );
 
@@ -273,28 +281,115 @@ int SingleGame::calcScore() {
 }
 
 void SingleGame::click(int id, int col, int row) {
+    if  (isComputerMoving)
+        return;
     MyWidget::click(id, col, row);
     //电脑执黑,该电脑走了
     if (!bTranRed && m_winner == 0) {
-        //todo :机器计算移到线程里
+        //等人走的棋子刷新
         QTimer::singleShot(100, [=]() {
-            Step *step = getBestMove();
-            if(step==nullptr){
-                iAmLost(false);
-            }else{
-                //电脑走棋
-                //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
-                //记录走棋
-                saveStep(step->_moveid, step->_killid, step->_colTo, step->_rowTo, mPassSteps);
-                //qDebug()<<"add step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid<<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+            startComputerMove();
 
-                killStone(step->_killid);
-                moveStone(step->_moveid, step->_colTo, step->_rowTo);
-                mUseTime=0;
-                delete step;
-            }
-            m_winner=judgeGameOver();
-            update();
+#if 0
+            Step *step = getBestMove();
+            updateComputerMove(step);
+#endif
         });
     }
+}
+
+QPointF SingleGame::center(int id) {
+    if (isComputerMoving){
+        return QPointF(PADDING_LEFT + (_ss[id]._col + 1) * mColumnWidth, PADDING_TOP + (_ss[id]._row + 1) * mRowHeight);
+    }else{
+        return MyWidget::center(id);
+    }
+}
+void SingleGame::drawStone(QPainter &painter, int id)
+{
+    if (isComputerMoving){
+
+        if (_ss[id]._dead) return;
+        painter.save();
+        QPointF c = center(id);
+        QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
+        if (selectId == id) {
+            painter.setBrush(QBrush(Qt::white));
+        } else {
+            painter.setBrush(QBrush(Qt::lightGray));
+        }
+
+        painter.setPen(Qt::darkYellow);
+        painter.drawEllipse(c, _r + 5, _r + 5);
+
+        painter.setPen(Qt::darkYellow);
+        painter.drawEllipse(c, _r, _r);
+
+        painter.setPen(Qt::black);
+        if (_ss[id]._red) {
+            painter.setPen(Qt::red);
+        }
+        painter.setFont(QFont("微软雅黑", _r, 700));
+        painter.drawText(rect, _ss[id].getText(), QTextOption(Qt::AlignCenter));
+
+        painter.restore();
+    }else{
+        MyWidget::drawStone(painter,id);
+    }
+}
+
+void SingleGame::startComputerMove( ){
+    for (int i=0;i<32;i++) {
+//        if(!_s[i]._dead){
+            _ss[i]. _col=_s[i]._col;
+            _ss[i]._row=_s[i]. _row;
+            _ss[i]._dead=_s[i]. _dead;
+            _ss[i]._red=_s[i]. _red;
+            _ss[i]._type=_s[i]. _type;
+            _ss[i]._id=_s[i]. _id;
+//        }
+    }
+    qDebug()<<"start comput " ;
+    QtConcurrent::run([=](){
+        isComputerMoving=true;
+        Step *step= getBestMove();
+        isComputerMoving=false;
+        qDebug()<<"QtConcurrent---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
+               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+        //主线程里调用槽函数
+//            QMetaObject::invokeMethod(this,"updateComputerMove", Qt::QueuedConnection,Q_ARG(Step *, step) );
+        emit computerMoveFinished(step);
+    });
+}
+
+void SingleGame::updateComputerMove(Step *step){
+
+    if(step==nullptr){
+        iAmLost(false);
+    }else{
+        int i=step->_moveid;
+        if(step->_killid>=0&&step->_killid<32){
+            _ss[i]. _col=_s[i]._col;
+            _ss[i]._row=_s[i]. _row;
+        }
+        if(step->_killid>=0&&step->_killid<32){
+            _ss[step->_killid]._dead=_s[step->_killid]. _dead;
+        }
+
+
+        qDebug()<<"updateComputerMove---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
+               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+        //电脑走棋
+        //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
+        //记录走棋
+        saveStep(step->_moveid, step->_killid, step->_colTo, step->_rowTo, mPassSteps);
+        //qDebug()<<"add step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid<<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+
+        killStone(step->_killid);
+        moveStone(step->_moveid, step->_colTo, step->_rowTo);
+        mUseTime=0;
+        delete step;
+    }
+    m_winner=judgeGameOver();
+    update();
 }

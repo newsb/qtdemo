@@ -34,7 +34,7 @@ SelectWidget::SelectWidget(QWidget *parent)
 
     this->setStyleSheet("QPushButton {font-family: 微软雅黑;font-size: 56px;color: #f16c4d}");
 
-
+#if 0
     /**thread two**/
     MyTask* worker = new MyTask();
     worker->moveToThread(&workerThread);
@@ -52,7 +52,7 @@ SelectWidget::SelectWidget(QWidget *parent)
     workerThread.start();
 
     emit operate("USB");
-
+#endif
 }
 
 

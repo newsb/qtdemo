@@ -28,7 +28,7 @@ class MyWidget : public QWidget {
     double _r;
     //棋盘格子高、宽
     double mColumnWidth, mRowHeight;
-    MyStone _s[32];
+    MyStone _s[32],_ss[32];
     int selectId = -1; //选择的棋子id
     int m_winner = 0;  // 0:未结束； 1：红棋赢；2：黑旗赢
 
@@ -40,7 +40,7 @@ class MyWidget : public QWidget {
     bool isBottomSide(int id);
 
     //根据棋子id，算出它的中心坐标
-    QPointF center(int id);
+    virtual QPointF center(int id );
     //根据坐标，计算行列
     bool getColRow(QPoint pt, int &col, int &row);
     //获取col、row位置的棋子
@@ -74,8 +74,6 @@ protected:
       bool bMouseOnBtn,bMouseOnBtn1;
       int mUseTimeId;
     void drawBoard(QPainter &painter);
-    //画棋子
-    void drawStone(QPainter &painter, int id);
     void drawGameResult(QPainter &painter);
     void drawGameBtns(QPainter &painter);
     bool canMoveCHE(int moveId, int col, int row, int killId);
@@ -94,6 +92,8 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void timerEvent(QTimerEvent *event) override;
+    //画棋子
+    virtual void drawStone(QPainter &painter, int id);
  signals:
      void back_signal();
      void repentance_signal(int backCount);
