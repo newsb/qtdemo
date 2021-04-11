@@ -392,4 +392,5 @@ void SingleGame::updateComputerMove(Step *step){
     }
     m_winner=judgeGameOver();
     update();
+    bells->play();
 }

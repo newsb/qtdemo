@@ -6,7 +6,7 @@
 #include <QPainterPath>
 #include <QWidget>
 #include "Step.h"
-
+#include <QSound>
 class MyWidget : public QWidget {
     Q_OBJECT
   public:
@@ -58,6 +58,8 @@ class MyWidget : public QWidget {
 
 protected:
     int mUseTime;
+
+    QSound * bells;
     void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
     QVector<Step *>  mPassSteps;
 //    void logStep(int moveId, int killId, int col, int row);
@@ -71,8 +73,9 @@ protected:
     void iAmLost(bool bRed);
   private:
       QRect mBackRect,mRepentanceRect,mUseTimeRect;
-      bool bMouseOnBtn,bMouseOnBtn1;
+      bool bMouseOnBtn=false,bMouseOnBtn1=false;
       int mUseTimeId;
+
     void drawBoard(QPainter &painter);
     void drawGameResult(QPainter &painter);
     void drawGameBtns(QPainter &painter);

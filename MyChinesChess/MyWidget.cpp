@@ -55,6 +55,8 @@ MyWidget::MyWidget(QWidget *parent)
     connect(this,&MyWidget::repentance_signal,&MyWidget::repentanceStep);
 
     mUseTimeId=startTimer(1000);
+
+    bells=new QSound(":/res/bell.wav");
 }
 
 void MyWidget::timerEvent(QTimerEvent *event)
@@ -126,33 +128,34 @@ void MyWidget::paintEvent(QPaintEvent *) {
 
 void MyWidget::drawGameBtns(QPainter &p ){
     p.save();
+
     if(bMouseOnBtn1){
         p.setBrush(QBrush(Qt::white));
     }else{
         p.setBrush(Qt::BrushStyle::NoBrush);
-    }/*
-    mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
-                      PADDING_RIGHT-20,25);*/
-    p.drawRect(mBackRect);
-    p.setPen(Qt::red);
+    }
+
+    p.drawEllipse(mBackRect);//p.drawRect(mBackRect);
+    p.setPen(Qt::blue);
+    p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
 
     if(bMouseOnBtn){
-        p.setBrush(QBrush(Qt::white));
+        p.setBrush(QBrush(Qt::darkCyan));
     }else{
         p.setBrush(Qt::BrushStyle::NoBrush);
     }
-//    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
-//                            PADDING_RIGHT-20,25);
-    p.drawRect(mRepentanceRect);
-    p.setPen(Qt::red);
-    p.drawText(mRepentanceRect, "Repentance", QTextOption(Qt::AlignCenter));
 
-//    mUseTimeRect=QRect(this->width()-PADDING_RIGHT+10,this->height()-PADDING_BOTTOM-55,
-//                         PADDING_RIGHT-20,35);
-    p.drawRect(mUseTimeRect);
-    p.setPen(Qt::red);
-    p.drawText(mUseTimeRect,QString("Used:%1 s").arg(mUseTime), QTextOption(Qt::AlignCenter));
+    p.drawRect(mRepentanceRect);
+    p.setPen(Qt::blue);
+    p.setFont(QFont("微软雅黑", 16, 700));
+    p.drawText(mRepentanceRect, "Repentant", QTextOption(Qt::AlignCenter));
+
+    p.setBrush(Qt::BrushStyle::NoBrush);
+    p.drawEllipse(mUseTimeRect);
+    p.setPen(Qt::blue);
+    p.setFont(QFont("微软雅黑", 16, 700));
+    p.drawText(mUseTimeRect,QString("%1 s").arg(mUseTime), QTextOption(Qt::AlignCenter));
 
     p.restore();
 }
@@ -172,6 +175,7 @@ void MyWidget::drawGameResult(QPainter &p ){
     if (m_winner == 1 || m_winner == 2) {
         QRect rect(PADDING_LEFT + mColumnWidth * 3, PADDING_TOP + mRowHeight * 5,  mColumnWidth * 4,  mRowHeight);
         p.setPen(Qt::red);
+        p.setFont(QFont("1",14,16,true));
         p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
     }
 }
@@ -221,10 +225,9 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     painter.save();
     QPointF c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
-    //    painter.setBrush(Qt::LinearGradientPattern);
+
     if (selectId == id) {
         painter.setBrush(QBrush(Qt::white));
-        //        painter.setBrush(Qt::NoBrush);
     } else {
         painter.setBrush(QBrush(Qt::lightGray));
     }
@@ -235,14 +238,11 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     painter.setPen(Qt::darkYellow);
     painter.drawEllipse(c, _r, _r);
 
-    /* painter.setPen(Qt::green);
-         painter.drawEllipse(c, _r - 5, _r - 5);
-    */
-
     painter.setPen(Qt::black);
     if (_s[id]._red) {
         painter.setPen(Qt::red);
     }
+    //painter.drawEllipse(c, _r - 5, _r - 5);
     painter.setFont(QFont("微软雅黑", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
 
@@ -707,6 +707,8 @@ void MyWidget::click(int id, int col, int row) {
             mUseTime=0;
             update();
             m_winner=judgeGameOver();
+
+            bells->play();
         }
     }
 }
