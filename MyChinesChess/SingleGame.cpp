@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QTimer>
 #include <QtConcurrent>
+#include <QCloseEvent>
+
 SingleGame::SingleGame(QWidget *parent)
     : MyWidget(parent) {
 
@@ -12,6 +14,7 @@ SingleGame::SingleGame(QWidget *parent)
 SingleGame::~SingleGame(){
 
 }
+
 int SingleGame::getMaxScore(int level, int currentMinScore) {
     if (level == 0) return calcScore( );
 
@@ -110,6 +113,7 @@ int SingleGame::getMinScore(int level, int currentMaxScore) {
     //    qDebug() << "oppnent worse step , Score:" << minScore;
     return minScore;
 }
+
 Step *SingleGame::getBestMove() {
     // 1获取所有可以走的步
     QVector<Step *> steps;
@@ -281,8 +285,10 @@ int SingleGame::calcScore() {
 }
 
 void SingleGame::click(int id, int col, int row) {
-    if  (isComputerMoving)
+    if  (isComputerMoving){
         return;
+    }
+
     MyWidget::click(id, col, row);
     //电脑执黑,该电脑走了
     if (!bTranRed && m_winner == 0) {
@@ -299,12 +305,23 @@ void SingleGame::click(int id, int col, int row) {
 }
 
 QPointF SingleGame::center(int id) {
+
     if (isComputerMoving){
         return QPointF(PADDING_LEFT + (_ss[id]._col + 1) * mColumnWidth, PADDING_TOP + (_ss[id]._row + 1) * mRowHeight);
     }else{
         return MyWidget::center(id);
     }
 }
+
+void SingleGame::closeEvent(QCloseEvent *event)
+{
+    /* 等待任何悬垂的线*/
+    mStopping=true;
+   if (QThreadPool::globalInstance()->activeThreadCount())
+       QThreadPool::globalInstance()->waitForDone();
+   event->accept();
+}
+
 void SingleGame::drawStone(QPainter &painter, int id)
 {
     if (isComputerMoving){
@@ -351,20 +368,28 @@ void SingleGame::startComputerMove( ){
     }
     qDebug()<<"start comput " ;
     QtConcurrent::run([=](){
+//        multex.lock();
         isComputerMoving=true;
+//        multex.unlock();
         Step *step= getBestMove();
+//        multex.lock();
         isComputerMoving=false;
+//        multex.unlock();
         qDebug()<<"QtConcurrent---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
                <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
         //主线程里调用槽函数
 //            QMetaObject::invokeMethod(this,"updateComputerMove", Qt::QueuedConnection,Q_ARG(Step *, step) );
-        emit computerMoveFinished(step);
+        if(!mStopping)
+            emit computerMoveFinished(step);
     });
 }
 
 void SingleGame::updateComputerMove(Step *step){
-
+    //如果是正在关闭，则不再刷新
+    if(mStopping) return;
+    //如果没有可走的步数，就认输
     if(step==nullptr){
+        //认输
         iAmLost(false);
     }else{
         int i=step->_moveid;

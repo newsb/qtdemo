@@ -34,8 +34,12 @@ signals:
     void computerMoveFinished(Step *step);
 public:
     virtual QPointF center(int id )override;
-    // MyWidget interface
+
 private:
+    QMutex multex;
+    bool mStopping=false;
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // SINGLEGAME_H

@@ -72,7 +72,7 @@ void SelectWidget::initBtns() {
         _borad = new MyWidget();
 
         connect(_borad,&MyWidget::back_signal,[=](){
-            _borad->hide();
+            _borad->close();
             this->show();
         });
         _borad->show();
@@ -86,7 +86,7 @@ void SelectWidget::initBtns() {
     connect(btnSingle, &QPushButton::clicked, [=]() {
         _borad = new SingleGame();
         connect(_borad,&SingleGame::back_signal,[=](){
-            _borad->hide();
+            _borad->close();
             this->show();
         });
         _borad->show();
@@ -106,7 +106,7 @@ void SelectWidget::initBtns() {
         }
         _borad = new NetGame(bServer);
         connect(_borad,&NetGame::back_signal,[=](){
-            _borad->hide();
+            _borad->close();
             this->show();
         });
         _borad->show();
