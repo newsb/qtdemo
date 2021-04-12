@@ -62,6 +62,10 @@ MyWidget::MyWidget(QWidget *parent)
 void MyWidget::timerEvent(QTimerEvent *event)
 {
     if(mUseTimeId==event->timerId()){
+        //游戏结束了，不继续计时
+        if (m_winner != 0) {
+            killTimer(mUseTimeId);
+        }
         mUseTime++;
         update(mUseTimeRect);
     }

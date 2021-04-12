@@ -139,7 +139,7 @@ Step *SingleGame::getBestMove() {
             if (ret != nullptr) delete ret;
             ret = step;
             unfakeMove(step);
-            qDebug() << "getBestMove isLost true "  ;
+            qDebug() << "getBestMove isLost========== true "  ;
         }else{
             score = getMinScore(_level, maxScore);
             if (score > maxScore) {
@@ -216,13 +216,22 @@ void SingleGame::getAllPossibleStep(QVector<Step *> &steps) {
                 break;
             }
             case  MyStone::SHI:
-            case  MyStone::JIANG:{//九宫格内
-                if(isBottomSide(i)){
-                    startRow=7,endRow=9,startCol=3,endCol=5;
-                }else{
-                    startRow=0,endRow=2,startCol=3,endCol=5;
-                }
-                break;
+            case  MyStone::JIANG:{
+                //将要检查是否可以直接干死对方的老将
+//                startRow=_s[i]._row,endRow=_s[i]._row,startCol=0,endCol=8;
+
+//                for (int row = startRow; row <= endRow; row++) {
+//                    for (int col = startCol; col <= endCol; col++) {
+//                        getAPossibleStep(i,col,row,steps);
+//                    }
+//                }
+//                //九宫格内,!!
+//                if(isBottomSide(i)){
+//                    startRow=7,endRow=9,startCol=3,endCol=5;
+//                }else{
+//                    startRow=0,endRow=2,startCol=3,endCol=5;
+//                }
+//                break;
             }
         }
 
