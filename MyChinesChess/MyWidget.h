@@ -76,6 +76,7 @@ protected:
       QRect mBackRect,mRepentanceRect,mUseTimeRect;
       bool bMouseOnBtn=false,bMouseOnBtn1=false;
       int mUseTimeId;
+
     void drawBoard(QPainter &painter);
     void drawGameResult(QPainter &painter);
     void drawGameBtns(QPainter &painter);
@@ -88,7 +89,6 @@ protected:
     bool canMoveBING(int moveId, int col, int row, int killId);
 
 
-    // QObject interface
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;

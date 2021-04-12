@@ -122,10 +122,11 @@ void MyWidget::paintEvent(QPaintEvent *) {
     drawBoard(p);
 
     //绘制棋子
+    p.save();
     for (int i = 0; i < 32; ++i) {
         drawStone(p, i);
     }
-
+    p.restore();
     //绘制输赢结果。
     drawGameResult(p);
     //绘制操作按钮
@@ -141,8 +142,8 @@ void MyWidget::drawGameBtns(QPainter &p ){
         p.setBrush(Qt::BrushStyle::NoBrush);
     }
 
-    p.drawEllipse(mBackRect);//p.drawRect(mBackRect);
     p.setPen(Qt::blue);
+    p.drawEllipse(mBackRect);//p.drawRect(mBackRect);
     p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
 
@@ -153,13 +154,11 @@ void MyWidget::drawGameBtns(QPainter &p ){
     }
 
     p.drawRect(mRepentanceRect);
-    p.setPen(Qt::blue);
     p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mRepentanceRect, "Repentant", QTextOption(Qt::AlignCenter));
 
     p.setBrush(Qt::BrushStyle::NoBrush);
     p.drawEllipse(mUseTimeRect);
-    p.setPen(Qt::blue);
     p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mUseTimeRect,QString("%1 s").arg(mUseTime), QTextOption(Qt::AlignCenter));
 
@@ -178,12 +177,15 @@ void MyWidget::resizeEvent(QResizeEvent *event)
 }
 
 void MyWidget::drawGameResult(QPainter &p ){
+    p.save();
+
     if (m_winner == 1 || m_winner == 2) {
         QRect rect(PADDING_LEFT + mColumnWidth * 3, PADDING_TOP + mRowHeight * 5,  mColumnWidth * 4,  mRowHeight);
         p.setPen(Qt::red);
         p.setFont(QFont("1",14,16,true));
         p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
     }
+    p.restore();
 }
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event)
@@ -228,56 +230,61 @@ bool MyWidget::isBottomSide(int id) { return _bRedSide == _s[id]._red; }
 
 void MyWidget::drawStone(QPainter &painter, int id) {
     if (_s[id]._dead) return;
-    painter.save();
+
     QPointF c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
 
     //绘制上次选择的棋子边框
     QBrush oldB=painter.brush();
-    painter.setBrush(QBrush(Qt::magenta));
-    painter.setPen(Qt::magenta);
+//    painter.setBrush(QBrush(Qt::magenta));
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(QPen(QBrush(Qt::magenta),3) );
     QRectF rect2 = QRectF(c.x() - _r-5, c.y() - _r-5, 2 * _r+10, 2 * _r+10);
+
+//            QRect rect3(rect2.left(),
+//                        rect2.top(),
+//                        rect2.width()+20,
+//                        rect2.height()+20 );
     if(mLastSelectIdRed==id || mLastSelectIdBlack==id){
 //        painter.drawRect(rect2);
         QPainterPath path;
-        int spanRad=70;
-        int dRad=(90-spanRad)/2;
+//        int spanRad=60;
+//        int dRad=(90-spanRad)/2;
 
-        int dr1=_r-5;
+        int dr1=_r-10;
         path.moveTo(rect2.left(), rect2.top());
         path.lineTo(rect2.left(), rect2.top()+dr1);
         path.moveTo(rect2.left(), rect2.top());
         path.lineTo(rect2.left()+dr1, rect2.top());
-//        QRect rect3(rect2.left(),
-//                    rect2.top(),
-//                    rect2.width()+20,
-//                    rect2.height()+20 );
-        path.arcTo(rect2 , 90+dRad,spanRad);
+//        rect3.setLeft(rect2.left()-20);
+//        rect3.setTop(rect2.top()-20);
+//        path.arcTo(rect3 , 90+dRad,spanRad);
 
         path.moveTo(rect2.right()-dr1, rect2.top());
         path.lineTo(rect2.right() , rect2.top());
         path.lineTo(rect2.right(), rect2.top()+dr1);
-        path.arcTo(rect2,0+dRad,spanRad);
+
+//        rect3.setLeft(rect2.left()+20);
+//        rect3.setTop(rect2.top());
+//        path.arcTo(rect3,0+dRad,spanRad);
 
         path.moveTo(rect2.left(), rect2.bottom()-dr1);
         path.lineTo(rect2.left() ,rect2.bottom());
         path.lineTo(rect2.left()+dr1 ,rect2.bottom());
-        path.moveTo(rect2.left()+dr1, rect2.bottom());
-//        rect3=QRect(rect2.left(),
-//                    rect2.top()-20,
-//                    rect2.width()+20,
-//                    rect2.height()+20 );
-        path.arcTo(rect2,180+dRad,spanRad);
+        path.moveTo(rect2.left(), rect2.bottom()-dr1);
+
+//        rect3.setTop(rect2.top()-20);
+//        rect3.setLeft(rect2.left());
+//        path.arcTo(rect3,180+dRad,spanRad);
 
         path.moveTo(rect2.right()-dr1, rect2.bottom() );
         path.lineTo(rect2.right() ,rect2.bottom());
         path.lineTo(rect2.right() ,rect2.bottom()-dr1);
         path.moveTo(rect2.right()-dr1, rect2.bottom() );
-//        rect3=QRect(  rect2.left()-20,
-//                      rect2.top()-20,
-//                      rect2.width()+20,
-//                      rect2.height()+20 );
-        path.arcTo(rect2,270+dRad,spanRad);
+
+//        rect3.setTop(rect2.top()-20);
+//        rect3.setLeft(rect2.left()-20);
+//        path.arcTo(rect2,270+dRad,spanRad);
 
 //        painter.setPen(Qt::darkBlue);
         painter.drawPath(path);
@@ -306,9 +313,11 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     painter.setFont(QFont("微软雅黑", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
 #endif
-    painter.restore();
-}
 
+}
+//const int D_COL_W=3;
+//const int D_ROW_H=10;
+//3d效果：从上到下     行高递增、，列宽递增
 void MyWidget::drawBoard(QPainter &p) {
     double colw = mColumnWidth;
     double rowh = mRowHeight;
