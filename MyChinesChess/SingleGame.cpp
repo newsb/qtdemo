@@ -32,6 +32,7 @@ int SingleGame::getMaxScore(int level, int currentMinScore) {
     int maxScore = -100000;
 
     while (steps.count()) {
+        if( mStopping) return 0;
         Step *step = steps.back();
         steps.removeLast();
 
@@ -81,6 +82,7 @@ int SingleGame::getMinScore(int level, int currentMaxScore) {
     int minScore = 100000;
 
     while (steps.count()) {
+        if( mStopping) return 0;
         Step *step = steps.back();
         steps.removeLast();
 
@@ -125,6 +127,8 @@ Step *SingleGame::getBestMove() {
     int maxScore = -100000;
     Step *ret = nullptr;
     while (steps.count()) {
+        if( mStopping) return ret;
+
         Step *step = steps.back();
         steps.removeLast();
 
