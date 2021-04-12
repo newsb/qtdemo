@@ -236,39 +236,55 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     QBrush oldB=painter.brush();
     painter.setBrush(QBrush(Qt::magenta));
     painter.setPen(Qt::magenta);
-    QRect rect2 = QRect(c.x() - _r-5, c.y() - _r-5, 2 * _r+10, 2 * _r+10);
+    QRectF rect2 = QRectF(c.x() - _r-5, c.y() - _r-5, 2 * _r+10, 2 * _r+10);
     if(mLastSelectIdRed==id || mLastSelectIdBlack==id){
+//        painter.drawRect(rect2);
         QPainterPath path;
         int spanRad=70;
-        path.moveTo(rect2.left(), rect2.top());
-        path.lineTo(rect2.left(), rect2.top()+_r);
-        path.moveTo(rect2.left(), rect2.top());
-        path.lineTo(rect2.left()+_r, rect2.top());
-        path.arcTo(rect2,100,spanRad);
+        int dRad=(90-spanRad)/2;
 
-        path.moveTo(rect2.right()-_r, rect2.top());
+        int dr1=_r-5;
+        path.moveTo(rect2.left(), rect2.top());
+        path.lineTo(rect2.left(), rect2.top()+dr1);
+        path.moveTo(rect2.left(), rect2.top());
+        path.lineTo(rect2.left()+dr1, rect2.top());
+//        QRect rect3(rect2.left(),
+//                    rect2.top(),
+//                    rect2.width()+20,
+//                    rect2.height()+20 );
+        path.arcTo(rect2 , 90+dRad,spanRad);
+
+        path.moveTo(rect2.right()-dr1, rect2.top());
         path.lineTo(rect2.right() , rect2.top());
-        path.lineTo(rect2.right(), rect2.top()+_r);
-        path.arcTo(rect2,10,spanRad);
+        path.lineTo(rect2.right(), rect2.top()+dr1);
+        path.arcTo(rect2,0+dRad,spanRad);
 
-        path.moveTo(rect2.left(), rect2.bottom()-_r);
+        path.moveTo(rect2.left(), rect2.bottom()-dr1);
         path.lineTo(rect2.left() ,rect2.bottom());
-        path.lineTo(rect2.left()+_r ,rect2.bottom());
-        path.moveTo(rect2.left(), rect2.bottom()-_r);
-        path.arcTo(rect2,190,spanRad);
+        path.lineTo(rect2.left()+dr1 ,rect2.bottom());
+        path.moveTo(rect2.left()+dr1, rect2.bottom());
+//        rect3=QRect(rect2.left(),
+//                    rect2.top()-20,
+//                    rect2.width()+20,
+//                    rect2.height()+20 );
+        path.arcTo(rect2,180+dRad,spanRad);
 
-        path.moveTo(rect2.right()-_r, rect2.bottom() );
+        path.moveTo(rect2.right()-dr1, rect2.bottom() );
         path.lineTo(rect2.right() ,rect2.bottom());
-        path.lineTo(rect2.right() ,rect2.bottom()-_r);
-        path.moveTo(rect2.right()-_r, rect2.bottom() );
-        path.arcTo(rect2,280,spanRad);
+        path.lineTo(rect2.right() ,rect2.bottom()-dr1);
+        path.moveTo(rect2.right()-dr1, rect2.bottom() );
+//        rect3=QRect(  rect2.left()-20,
+//                      rect2.top()-20,
+//                      rect2.width()+20,
+//                      rect2.height()+20 );
+        path.arcTo(rect2,270+dRad,spanRad);
 
-        painter.setPen(Qt::darkBlue);
+//        painter.setPen(Qt::darkBlue);
         painter.drawPath(path);
     }
     painter.setBrush(oldB);
 
-
+#if 1
     if (selectId == id) {
         painter.setBrush(QBrush(Qt::white));
     } else {
@@ -289,7 +305,7 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     //painter.drawEllipse(c, _r - 5, _r - 5);
     painter.setFont(QFont("微软雅黑", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
-
+#endif
     painter.restore();
 }
 
