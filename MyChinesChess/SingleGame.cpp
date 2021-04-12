@@ -426,6 +426,11 @@ void SingleGame::updateComputerMove(Step *step){
         killStone(step->_killid);
         moveStone(step->_moveid, step->_colTo, step->_rowTo);
         mUseTime=0;
+        if(isBottomSide(step->_moveid)){
+            mLastSelectIdRed=step->_moveid;
+        }else{
+            mLastSelectIdBlack=step->_moveid;
+        }
         delete step;
     }
     m_winner=judgeGameOver();

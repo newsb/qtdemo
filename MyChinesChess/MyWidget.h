@@ -58,6 +58,7 @@ class MyWidget : public QWidget {
 
 protected:
     int mUseTime;
+    int mLastSelectIdRed,mLastSelectIdBlack;
 
     QSound * bells;
     void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
@@ -75,7 +76,6 @@ protected:
       QRect mBackRect,mRepentanceRect,mUseTimeRect;
       bool bMouseOnBtn=false,bMouseOnBtn1=false;
       int mUseTimeId;
-
     void drawBoard(QPainter &painter);
     void drawGameResult(QPainter &painter);
     void drawGameBtns(QPainter &painter);

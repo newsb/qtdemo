@@ -17,6 +17,8 @@ MyWidget::MyWidget(QWidget *parent)
     bMouseOnBtn=false;
     bMouseOnBtn1=false;
     mUseTime=0;
+    mLastSelectIdRed=-1;
+    mLastSelectIdBlack=-1;
     // 所以想要实现mouseMoveEvent,若是setMouseTrack(true),直接可以得到监听事件。若是setMouseTrack(false),只有鼠标按下才会有mouseMove监听事件响应。
     setMouseTracking(true);
     //隐藏form标题栏
@@ -230,17 +232,55 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     QPointF c = center(id);
     QRect rect = QRect(c.x() - _r, c.y() - _r, 2 * _r, 2 * _r);
 
+    //绘制上次选择的棋子边框
+    QBrush oldB=painter.brush();
+    painter.setBrush(QBrush(Qt::magenta));
+    painter.setPen(Qt::magenta);
+    QRect rect2 = QRect(c.x() - _r-5, c.y() - _r-5, 2 * _r+10, 2 * _r+10);
+    if(mLastSelectIdRed==id || mLastSelectIdBlack==id){
+        QPainterPath path;
+        int spanRad=70;
+        path.moveTo(rect2.left(), rect2.top());
+        path.lineTo(rect2.left(), rect2.top()+_r);
+        path.moveTo(rect2.left(), rect2.top());
+        path.lineTo(rect2.left()+_r, rect2.top());
+        path.arcTo(rect2,100,spanRad);
+
+        path.moveTo(rect2.right()-_r, rect2.top());
+        path.lineTo(rect2.right() , rect2.top());
+        path.lineTo(rect2.right(), rect2.top()+_r);
+        path.arcTo(rect2,10,spanRad);
+
+        path.moveTo(rect2.left(), rect2.bottom()-_r);
+        path.lineTo(rect2.left() ,rect2.bottom());
+        path.lineTo(rect2.left()+_r ,rect2.bottom());
+        path.moveTo(rect2.left(), rect2.bottom()-_r);
+        path.arcTo(rect2,190,spanRad);
+
+        path.moveTo(rect2.right()-_r, rect2.bottom() );
+        path.lineTo(rect2.right() ,rect2.bottom());
+        path.lineTo(rect2.right() ,rect2.bottom()-_r);
+        path.moveTo(rect2.right()-_r, rect2.bottom() );
+        path.arcTo(rect2,280,spanRad);
+
+        painter.setPen(Qt::darkBlue);
+        painter.drawPath(path);
+    }
+    painter.setBrush(oldB);
+
+
     if (selectId == id) {
         painter.setBrush(QBrush(Qt::white));
     } else {
         painter.setBrush(QBrush(Qt::lightGray));
     }
+    painter.setPen(Qt::darkYellow);
+    painter.drawEllipse(c, _r , _r );
 
     painter.setPen(Qt::darkYellow);
-    painter.drawEllipse(c, _r + 5, _r + 5);
+    painter.drawEllipse(c, _r-5, _r-5);
 
-    painter.setPen(Qt::darkYellow);
-    painter.drawEllipse(c, _r, _r);
+
 
     painter.setPen(Qt::black);
     if (_s[id]._red) {
@@ -707,7 +747,13 @@ void MyWidget::click(int id, int col, int row) {
 
             killStone(id);
             moveStone(selectId, col, row);
+            if(isBottomSide(selectId)){
+                mLastSelectIdRed=selectId;
+            }else{
+                mLastSelectIdBlack=selectId;
+            }
             selectId = -1;
+
             mUseTime=0;
             update();
             m_winner=judgeGameOver();
