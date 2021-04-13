@@ -32,7 +32,8 @@ HEADERS += \
     Step.h \
     mystone.h \
     mytask.h \
-    netgame.h
+    netgame.h \
+    scoreData.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

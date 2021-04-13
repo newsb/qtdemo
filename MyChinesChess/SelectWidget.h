@@ -31,7 +31,7 @@ class SelectWidget : public QWidget {
     MyWidget *_borad;
     QLabel *bg, *bgTitle;
     void initBtns();
-
+    QFont mFont;
 
     void SendStart(void);
 public slots:

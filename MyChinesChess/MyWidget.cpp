@@ -3,7 +3,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QtMath>
-/**todo :
+#include <QFileDialog>
+/**TODO :
     悔棋
     棋局界面调整，不从左上角、右下角开始绘制棋盘
     将军的时候，震动提示；
@@ -144,22 +145,39 @@ void MyWidget::drawGameBtns(QPainter &p ){
 
     p.setPen(Qt::blue);
     p.drawEllipse(mBackRect);//p.drawRect(mBackRect);
-    p.setFont(QFont("微软雅黑", 16, 700));
-    p.drawText(mBackRect, "back", QTextOption(Qt::AlignCenter));
+    p.setFont(QFont("华康少女文字W5(P)", 16, 700));
+    p.drawText(mBackRect, "返回", QTextOption(Qt::AlignCenter));
 
-    if(bMouseOnBtn){
+    if(bMouseOnBtn  ){
         p.setBrush(QBrush(Qt::darkCyan));
     }else{
         p.setBrush(Qt::BrushStyle::NoBrush);
     }
 
     p.drawRect(mRepentanceRect);
-    p.setFont(QFont("微软雅黑", 16, 700));
-    p.drawText(mRepentanceRect, "Repentant", QTextOption(Qt::AlignCenter));
+//    p.setFont(QFont("微软雅黑", 16, 700));
+    p.drawText(mRepentanceRect, "悔棋", QTextOption(Qt::AlignCenter));
+
+    if(  bMouseOnSave){
+        p.setBrush(QBrush(Qt::darkCyan));
+    }else{
+        p.setBrush(Qt::BrushStyle::NoBrush);
+    }
+
+    p.drawRect(mSaveRect);
+    p.drawText(mSaveRect, "保存", QTextOption(Qt::AlignCenter));
+
+    if( bMouseOnLoad ){
+        p.setBrush(QBrush(Qt::darkCyan));
+    }else{
+        p.setBrush(Qt::BrushStyle::NoBrush);
+    }
+    p.drawRect(mLoadRect);
+    p.drawText(mLoadRect, "加载", QTextOption(Qt::AlignCenter));
 
     p.setBrush(Qt::BrushStyle::NoBrush);
     p.drawEllipse(mUseTimeRect);
-    p.setFont(QFont("微软雅黑", 16, 700));
+//    p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mUseTimeRect,QString("%1 s").arg(mUseTime), QTextOption(Qt::AlignCenter));
 
     p.restore();
@@ -172,6 +190,12 @@ void MyWidget::resizeEvent(QResizeEvent *event)
                       PADDING_RIGHT-20,25);
     mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
                             PADDING_RIGHT-20,25);
+
+    mSaveRect=QRect(this->width()-PADDING_RIGHT+10,this->PADDING_TOP+50+25+10+35,
+                      PADDING_RIGHT-20,25);
+    mLoadRect=QRect(this->width()-PADDING_RIGHT+10,this->PADDING_TOP+50+25+10+65,
+                      PADDING_RIGHT-20,25);
+
     mUseTimeRect=QRect(this->width()-PADDING_RIGHT+10,this->height()-PADDING_BOTTOM-55,
                          PADDING_RIGHT-20,35);
 }
@@ -182,8 +206,8 @@ void MyWidget::drawGameResult(QPainter &p ){
     if (m_winner == 1 || m_winner == 2) {
         QRect rect(PADDING_LEFT + mColumnWidth * 3, PADDING_TOP + mRowHeight * 5,  mColumnWidth * 4,  mRowHeight);
         p.setPen(Qt::red);
-        p.setFont(QFont("1",14,16,true));
-        p.drawText(rect, "game over", QTextOption(Qt::AlignCenter));
+        p.setFont(QFont("华康少女文字W5(P)",14,16,true));
+        p.drawText(rect, "游戏结束", QTextOption(Qt::AlignCenter));
     }
     p.restore();
 }
@@ -194,6 +218,10 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event)
     update(mRepentanceRect);
     bMouseOnBtn1=(mBackRect.contains( event->pos()));
     update(mBackRect);
+    bMouseOnSave=mSaveRect.contains(event->pos());
+    update(mSaveRect);
+    bMouseOnLoad=mLoadRect.contains(event->pos());
+    update(mLoadRect);
 }
 QPainterPath MyWidget::getPaoBingPostionPath(QPoint &point, int half) const {
     QPainterPath path;
@@ -310,7 +338,7 @@ void MyWidget::drawStone(QPainter &painter, int id) {
         painter.setPen(Qt::red);
     }
     //painter.drawEllipse(c, _r - 5, _r - 5);
-    painter.setFont(QFont("微软雅黑", _r, 700));
+    painter.setFont(QFont("华康少女文字W5(P)", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
 #endif
 
@@ -429,7 +457,7 @@ void MyWidget::drawBoard(QPainter &p) {
 
     QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5,
                         colw * 3,  rowh);
-    p.setFont(QFont("华文隶书", 24));
+    p.setFont(QFont("华康少女文字W5(P)", 24));
     p.setPen(Qt::darkYellow);
     p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
 //    p.drawRect(rect)    ;
@@ -787,6 +815,7 @@ void MyWidget::click(int id, int col, int row) {
         }
     }
 }
+
 void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
     QPoint pt = event->pos();
 
@@ -796,6 +825,14 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     if(mRepentanceRect.contains(pt)){
         emit repentance_signal(1);
+        return;
+    }
+    if(mSaveRect.contains(pt)){
+        saveStone();
+        return;
+    }
+    if(mLoadRect.contains(pt)){
+        loadStone();
         return;
     }
 
@@ -859,6 +896,89 @@ void MyWidget::unfakeMove(Step *step) {
     moveStone(step->_moveid, step->_colFrom, step->_rowFrom);
 }
 
+void MyWidget::saveStone(){
+    QString fn=QFileDialog::getSaveFileName(this,"保存残局",".","TEXT(*.txt)");
+    if (fn.isEmpty()) return;
+
+    QFile file(fn);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QString s="";
+    s+=QString::number(mLastSelectIdRed)+"\n";
+    s+=QString::number( mLastSelectIdBlack)+"\n";
+    s+= bTranRed?"1\n":"0\n" ;
+    for (int i=0;i<32;i++) {
+        //if (!_s[i]._dead){
+
+        s+= QString::number( _s[i]._id)+","+QString::number( _s[i]._dead)+","
+             +QString::number( _s[i]._col)+","+QString::number( _s[i]._row)+"\n";
+        //}
+    }
+
+    file.write(s.toUtf8());
+    file.close();
+}
+void MyWidget::loadStone(){
+
+    QString fn=QFileDialog::getOpenFileName(this,"读取残局",".","TEXT(*.txt)");
+    if (fn.isEmpty()) return;
+
+    bool ok;
+    QFile file(fn);
+    ok=file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if(!ok){
+        qDebug()<<"open file("<< fn << ") failed:"<<file.errorString();
+        return;
+    }
+    int c=0;
+    while(!file.atEnd()){
+
+        QString  line=file.readLine();
+        c++;
+        if (c==1 ){
+            mLastSelectIdRed=line.toInt(&ok);
+            if(!ok)
+                qDebug()<<"mLastSelectIdRed:failed";
+            qDebug()<<"mLastSelectIdRed:"<<mLastSelectIdRed;
+            continue;
+        }
+        if (c==2 ){
+            mLastSelectIdBlack=line.toInt(&ok);
+            if(!ok) qDebug()<<"mLastSelectIdBlack:failed";
+            qDebug()<<"mLastSelectIdBlack:"<<mLastSelectIdBlack;
+            continue;
+        }
+        if (c==3 ){
+            bTranRed=line.trimmed()=="1" ;
+            qDebug()<<"bTranRed:"<<bTranRed;
+            continue;
+        }
+
+        if(line.isEmpty()) continue;
+        QStringList list=line.split(",");
+        if (list.isEmpty()) continue;
+        int id=-1;
+        if (list.count()>0){
+            id = list.at(0).toInt(&ok);
+            if(!ok) qDebug()<<"list.at(0):invalid number";
+        }
+        if(id<0)continue;
+
+        if (list.count()>1){
+            _s[id]._dead=list.at(1).toInt(&ok)!=0;
+            if(!ok) qDebug()<<"list.at(1):invalid number";
+        }
+        if (list.count()>2){
+            _s[id]._col=list.at(2).toInt(&ok);
+            if(!ok) qDebug()<<"list.at(2):invalid number";
+        }
+        if (list.count()>3){
+            _s[id]._row=list.at(3).toInt(&ok);
+            if(!ok) qDebug()<<"list.at(3):invalid number";
+        }
+    }
+
+    file.close();
+}
 
 
 

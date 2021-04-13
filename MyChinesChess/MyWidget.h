@@ -73,10 +73,11 @@ protected:
     bool cannotMoveAnyStone(bool bRed);
     void iAmLost(bool bRed);
   private:
-      QRect mBackRect,mRepentanceRect,mUseTimeRect;
-      bool bMouseOnBtn=false,bMouseOnBtn1=false;
+      QRect mBackRect,mRepentanceRect,mUseTimeRect,mSaveRect,mLoadRect;
+      bool bMouseOnBtn=false,bMouseOnBtn1=false,bMouseOnSave=false,bMouseOnLoad=false;
       int mUseTimeId;
-
+      void saveStone();
+      void loadStone();
     void drawBoard(QPainter &painter);
     void drawGameResult(QPainter &painter);
     void drawGameBtns(QPainter &painter);

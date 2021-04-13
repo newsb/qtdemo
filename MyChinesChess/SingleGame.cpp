@@ -3,7 +3,7 @@
 #include <QTimer>
 #include <QtConcurrent>
 #include <QCloseEvent>
-
+#include "scoreData.h"
 SingleGame::SingleGame(QWidget *parent)
     : MyWidget(parent) {
 
@@ -12,7 +12,7 @@ SingleGame::SingleGame(QWidget *parent)
 }
 
 SingleGame::~SingleGame(){
-
+//TODO:ces
 }
 
 int SingleGame::getMaxScore(int level, int currentMinScore) {
@@ -249,49 +249,72 @@ void SingleGame::fakeMove(Step *step) {
     killStone(step->_killid);
     moveStone(step->_moveid, step->_colTo, step->_rowTo);
 }
-
 int SingleGame::calcScore() {
 
     //    enum TYPE         { CHE, MA, XIANG, SHI, JIANG, BING, PAO };
-    static int chessScore[] = {100, 50, 20, 20, 1550, 10, 50};
+    // static int chessScore[] = {100, 50, 20, 20, 1550, 10, 50};
     int redTotalScore = 0, blackTotalScore = 0;
 
     for (int i = 0; i < 16; i++) {
         if (_s[i]._dead){
-//            //该黑棋走的时候
-//            if (isMyself){
-//                //如果红棋（对方）的将死了，分数返回最高
-//                if (_s[i]._type==MyStone::JIANG){
-//                    return 100000;
-//                }
-//            }else{//该红棋走的时候
-//                //如果红棋（己方）的将死了，分数返回最低
-//                if (_s[i]._type==MyStone::JIANG){
-//                    return -100000;
-//                }
-//            }
             continue;
         }
-        redTotalScore += chessScore[_s[i]._type];
+        int sc=0;
+        switch (_s[i]._type) {
+        case MyStone::CHE:
+            sc=SCORE_C[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::MA:
+            sc=SCORE_M[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::XIANG:
+            sc=SCORE_X[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::SHI:
+            sc=SCORE_S[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::JIANG:
+            sc=SCORE_J[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::PAO:
+            sc=SCORE_P[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::BING:
+            sc=SCORE_B_RED[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        }
+
+        redTotalScore += sc;// chessScore[_s[i]._type];
     }
     for (int i = 16; i < 32; i++) {
 
         if (_s[i]._dead){
-//            //该黑棋走的时候
-//            if (isMyself){
-//                //如果自己（黑旗）的将死了，分数返回最低
-//                if (_s[i]._type==MyStone::JIANG){
-//                    return -100000;
-//                }
-//            }else{//该红棋走的时候
-//                //如果对方（黑旗）的将死了，分数返回最高
-//                if (_s[i]._type==MyStone::JIANG){
-//                    return 100000;
-//                }
-//            }
             continue;
+        } int sc=0;
+        switch (_s[i]._type) {
+        case MyStone::CHE:
+            sc=SCORE_C[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::MA:
+            sc=SCORE_M[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::XIANG:
+            sc=SCORE_X[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::SHI:
+            sc=SCORE_S[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::JIANG:
+            sc=SCORE_J[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::PAO:
+            sc=SCORE_P[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
+        case MyStone::BING:
+            sc=SCORE_B_BLACK[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
+            break;
         }
-        blackTotalScore += chessScore[_s[i]._type];
+        blackTotalScore +=sc;// chessScore[_s[i]._type];
     }
     //黑旗总分-红棋总分
     return blackTotalScore - redTotalScore;
@@ -359,7 +382,7 @@ void SingleGame::drawStone(QPainter &painter, int id)
         if (_ss[id]._red) {
             painter.setPen(Qt::red);
         }
-        painter.setFont(QFont("微软雅黑", _r, 700));
+        painter.setFont(QFont("华康少女文字W5(P)", _r, 700));
         painter.drawText(rect, _ss[id].getText(), QTextOption(Qt::AlignCenter));
 
         painter.restore();

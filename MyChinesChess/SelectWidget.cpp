@@ -7,16 +7,25 @@ SelectWidget::SelectWidget(QWidget *parent)
     : QWidget(parent) {
 
     setFixedSize(800, 600);
-    bg = new QLabel(this);
-    bg->setGeometry(0, 0, 800, 600);
-    bg->setPixmap(QPixmap(":/res/bg.jpg").scaled(this->width(), this->height()));
+
+    mFont.setFamily("华康少女文字W5(P)");
+    mFont.setBold(true);
+    mFont.setWeight(56);
+
+
+//    bg = new QLabel(this);
+//    bg->setGeometry(0, 0, 800, 600);
+//    bg->setPixmap(QPixmap(":/res/bg.jpg").scaled(this->width(), this->height()));
 
     QVBoxLayout *layout = new QVBoxLayout;
 
     bgTitle = new QLabel(this);
     bgTitle->setGeometry(0, 0, 400, 145);
+//    bgTitle->setText("中国象棋");
+//    bgTitle->setFont(mFont);
     bgTitle->setPixmap(QPixmap(":/res/2.png").scaled(400, 145));
     bgTitle->move(this->width() / 2 - bgTitle->width() / 2, 30);
+    this->setStyleSheet("* {font-family: 华康少女文字W5(P);font-size: 56px;color: #f16c4d;bold: true}");
     initBtns();
 
     //    layout->addWidget(bgTitle);
@@ -32,7 +41,6 @@ SelectWidget::SelectWidget(QWidget *parent)
     //    layout->setGeometry(QRect(300, 160, 200, 107));
     this->setLayout(layout);
 
-    this->setStyleSheet("QPushButton {font-family: 微软雅黑;font-size: 56px;color: #f16c4d}");
 
 #if 0
     /**thread two**/
@@ -67,7 +75,7 @@ void SelectWidget::initBtns() {
     btnBase->setFlat(true);
     btnBase->setText("基本模式");
     btnBase->setGeometry(22, 22, 88, 44);
-
+    btnBase->setFont(mFont);
     connect(btnBase, &QPushButton::clicked, [=]() {
         _borad = new MyWidget();
 
@@ -83,6 +91,7 @@ void SelectWidget::initBtns() {
     btnSingle->setFlat(true);
     btnSingle->setText("单人模式");
     btnSingle->setGeometry(22, 66, 88, 44);
+    btnSingle->setFont(mFont);
     connect(btnSingle, &QPushButton::clicked, [=]() {
         _borad = new SingleGame();
         connect(_borad,&SingleGame::back_signal,[=](){
@@ -97,6 +106,7 @@ void SelectWidget::initBtns() {
     btnNet->setFlat(true);
     btnNet->setText("网络模式");
     btnNet->setGeometry(22, 22, 110, 44);
+    btnNet->setFont(mFont);
     connect(btnNet, &QPushButton::clicked, [=]() {
         //    网络 + 2人
         bool bServer = false;
