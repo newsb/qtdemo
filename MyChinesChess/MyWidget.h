@@ -7,6 +7,8 @@
 #include <QWidget>
 #include "Step.h"
 #include <QSound>
+#include <QMediaPlayer>
+
 class MyWidget : public QWidget {
     Q_OBJECT
   public:
@@ -54,6 +56,7 @@ class MyWidget : public QWidget {
     int countStoneAtRow(int col, int row1, int row2);
     bool canSelect();
     int judgeGameOver();
+    //TODO:canMove要增加规则：不允许一直将军
     bool canMove(int moveId, int col, int row, int killId);
 
 protected:
@@ -61,6 +64,7 @@ protected:
     int mLastSelectIdRed,mLastSelectIdBlack;
 
     QSound * bells;
+    QMediaPlayer * bells2;
     void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
     QVector<Step *>  mPassSteps;
 //    void logStep(int moveId, int killId, int col, int row);

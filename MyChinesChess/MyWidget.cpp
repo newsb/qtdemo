@@ -4,12 +4,9 @@
 #include <QPainter>
 #include <QtMath>
 #include <QFileDialog>
-/**TODO :
-    悔棋
-    棋局界面调整，不从左上角、右下角开始绘制棋盘
-    将军的时候，震动提示；
-    将军的时候，不允许动其他棋子
-加载残棋
+/**TODO :  将军的时候，特殊语音提示；
+        将军的时候，不允许动其他棋子
+        加载残棋
 
  * */
 MyWidget::MyWidget(QWidget *parent)
@@ -61,6 +58,13 @@ MyWidget::MyWidget(QWidget *parent)
     mUseTimeId=startTimer(1000);
 
     bells=new QSound(":/res/bell.wav");
+
+     bells2 = new QMediaPlayer;
+
+    bells2->setMedia(QUrl(":/res/jiangjun.mp3"));
+    bells2->setVolume(50);
+//    bells2->play();
+
 }
 
 void MyWidget::timerEvent(QTimerEvent *event)
@@ -921,7 +925,14 @@ void MyWidget::saveStep(int moveId, int killId, int col, int row, QVector<Step *
     step->_moveid = moveId;
 
     steps.append(step);
+    //如果killid是将，，，、
+    if(killId>-1&&_s[killId]._type==MyStone::JIANG){
+//        QMediaPlayer * bells2 = new QMediaPlayer;
 
+//        bells2->setMedia(QUrl(":/res/jiangjun.mp3"));
+//        bells2->setVolume(100);
+         bells2->play();
+    }
 }
 
 //void MyWidget::logStep(int moveId, int killId, int col, int row)

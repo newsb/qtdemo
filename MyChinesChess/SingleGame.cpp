@@ -12,7 +12,7 @@ SingleGame::SingleGame(QWidget *parent)
 }
 
 SingleGame::~SingleGame(){
-//TODO:ces
+
 }
 
 int SingleGame::getMaxScore(int level, int currentMinScore) {
