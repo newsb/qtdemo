@@ -52,9 +52,9 @@ QString MyStone::getText()const {
         case JIANG:
 
             if (_red) {
-                return "帅";
+                return "帥";
             } else {
-                return "将";
+                return "將";
             }
         case BING:
             if (_red) {

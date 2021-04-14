@@ -8,24 +8,26 @@ SelectWidget::SelectWidget(QWidget *parent)
 
     setFixedSize(800, 600);
 
-    mFont.setFamily("华康少女文字W5(P)");
+    mFont.setFamily("微软雅黑");
     mFont.setBold(true);
     mFont.setWeight(56);
 
-
-//    bg = new QLabel(this);
-//    bg->setGeometry(0, 0, 800, 600);
-//    bg->setPixmap(QPixmap(":/res/bg.jpg").scaled(this->width(), this->height()));
-
+#if 1
+    bg = new QLabel(this);
+    bg->setGeometry(0, 0, 800, 600);
+    bg->setPixmap(QPixmap(":/res/bg.jpg").scaled(this->width(), this->height()));
+#endif
     QVBoxLayout *layout = new QVBoxLayout;
 
     bgTitle = new QLabel(this);
     bgTitle->setGeometry(0, 0, 400, 145);
 //    bgTitle->setText("中国象棋");
 //    bgTitle->setFont(mFont);
+#if 1
     bgTitle->setPixmap(QPixmap(":/res/2.png").scaled(400, 145));
     bgTitle->move(this->width() / 2 - bgTitle->width() / 2, 30);
-    this->setStyleSheet("* {font-family: 华康少女文字W5(P);font-size: 56px;color: #f16c4d;bold: true}");
+    this->setStyleSheet("* {font: bold; font-family: 微软雅黑;font-size: 56px;color: #f16c4d}");
+#endif
     initBtns();
 
     //    layout->addWidget(bgTitle);
@@ -34,6 +36,7 @@ SelectWidget::SelectWidget(QWidget *parent)
     layout->addWidget(btnBase);
     layout->addWidget(btnSingle);
     layout->addWidget(btnNet);
+    layout->addWidget(btnQuit);
     layout->setAlignment(Qt::AlignBottom);
     layout->setMargin(20);
     layout->setSpacing(20);
@@ -122,6 +125,13 @@ void SelectWidget::initBtns() {
         _borad->show();
         this->hide();
     });
-}
 
+
+    btnQuit = new QPushButton(this);
+    btnQuit->setFlat(true);
+    btnQuit->setText("退出");
+    btnQuit->setGeometry(22, 22, 110, 44);
+    btnQuit->setFont(mFont);
+    connect(btnQuit, &QPushButton::clicked, this,&SelectWidget::close);
+}
 

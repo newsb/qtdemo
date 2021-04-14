@@ -24,9 +24,7 @@ class SelectWidget : public QWidget {
   signals:
 
   private:
-    QPushButton *btnBase;
-    QPushButton *btnSingle;
-    QPushButton *btnNet;
+    QPushButton *btnBase, *btnSingle, *btnNet,*btnQuit;
 
     MyWidget *_borad;
     QLabel *bg, *bgTitle;

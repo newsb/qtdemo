@@ -1,5 +1,5 @@
 #include "SingleGame.h"
-#include <QDebug>
+//#include <QDebug>
 #include <QTimer>
 #include <QtConcurrent>
 #include <QCloseEvent>
@@ -16,14 +16,15 @@ SingleGame::~SingleGame(){
 }
 
 int SingleGame::getMaxScore(int level, int currentMinScore) {
+//    qDebug() << "getMaxScore... "  ;
     if (level == 0) return calcScore( );
 
     if(isLost(false)){//：如果黑棋（机器自己）死了，返回最低分
         return -100000;
-        qDebug() << "getMaxScore isLost false "  ;
+//        qDebug() << "getMaxScore isLost false "  ;
     }else if(isLost(true)){//：如果红棋（对方）死了，返回最高分
         return 100000;
-        qDebug() << "getMaxScore isLost true "  ;
+//        qDebug() << "getMaxScore isLost true "  ;
     }
 
     QVector<Step *> steps;
@@ -67,13 +68,14 @@ int SingleGame::getMaxScore(int level, int currentMinScore) {
 }
 
 int SingleGame::getMinScore(int level, int currentMaxScore) {
+//    qDebug() << "getMinScore... "  ;
     if (level == 0) return calcScore( );
     if(isLost(false)){//：如果黑棋（对方、机器）死了，返回最高分
         return 100000;
-        qDebug() << "getMinScore isLost false "  ;
+//        qDebug() << "getMinScore isLost false "  ;
     }else if(isLost(true)){//：如果红棋（自己）死了，返回最低分
         return -100000;
-        qDebug() << "getMinScore isLost true "  ;
+//        qDebug() << "getMinScore isLost true "  ;
     }
 
     QVector<Step *> steps;
@@ -117,49 +119,46 @@ int SingleGame::getMinScore(int level, int currentMaxScore) {
 }
 
 Step *SingleGame::getBestMove() {
+    Step *ret = nullptr;
     // 1获取所有可以走的步
     QVector<Step *> steps;
     getAllPossibleStep(steps);
-
-    qDebug() << "getBestMove steps count :" << steps.count();
-    // 2试着走一下
-    // 3.评估分数，获取最高分
-    int maxScore = -100000;
-    Step *ret = nullptr;
-    while (steps.count()) {
-        if( mStopping) return ret;
-
-        Step *step = steps.back();
-        steps.removeLast();
-
-        fakeMove(step);
-        int   score;
-        if(isLost(true)){//：如果红棋（对方）死了，返回最高分
-            score= 100000;
-            if (ret != nullptr) delete ret;
-            ret = step;
-            unfakeMove(step);
-            qDebug() << "getBestMove isLost========== true "  ;
-        }else{
-            score = getMinScore(_level, maxScore);
-            if (score > maxScore) {
-                maxScore = score;
-                qDebug() << "getBestMove find better step , Score:" << score<<";_moveid:"
-                         <<_s[step->_moveid].getText()
-                         <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
-                         <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo
-                         <<"killid:"<<step->_killid;
+//    qDebug() << "getBestMove steps count :" << steps.count();
+//    try {
+        // 2试着走一下  3.评估分数，获取最高分
+        int maxScore = -100000;
+        while (steps.count()) {
+            if( mStopping) return ret;
+            Step *step = steps.back();
+            steps.removeLast();
+            fakeMove(step);
+            int   score;
+//            qDebug() << "before isLost  "  ;
+            if(isLost(true)){//：如果红棋（对方）死了，返回最高分
+                score= 100000;
                 if (ret != nullptr) delete ret;
-
                 ret = step;
-            } else {
-                delete step;
+                unfakeMove(step);
+//                qDebug() << "getBestMove isLost========== true "  ;
+            }else{
+                score = getMinScore(_level, maxScore);
+                if (score > maxScore) {
+                    maxScore = score;
+//                    qDebug() << "getBestMove find better step , Score:" << score<<";_moveid:"
+//                             <<_s[step->_moveid].getText()  <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
+//                             <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo <<"killid:"<<step->_killid;
+                    if (ret != nullptr) delete ret;
+
+                    ret = step;
+                } else {
+                    delete step;
+                }
+                unfakeMove(step);
             }
-            unfakeMove(step);
         }
-
-
-    }
+//    } catch (QException &e) {
+//        qDebug() << "QException: "<<e.what()  ;
+//    }
     return ret;
 }
 
@@ -290,7 +289,8 @@ int SingleGame::calcScore() {
 
         if (_s[i]._dead){
             continue;
-        } int sc=0;
+        }
+        int sc=0;
         switch (_s[i]._type) {
         case MyStone::CHE:
             sc=SCORE_C[_s[i]._col*COL_COUNT+_s[i]._row*ROW_COUNT];
@@ -382,7 +382,7 @@ void SingleGame::drawStone(QPainter &painter, int id)
         if (_ss[id]._red) {
             painter.setPen(Qt::red);
         }
-        painter.setFont(QFont("华康少女文字W5(P)", _r, 700));
+        painter.setFont(QFont("微软雅黑", _r, 700));
         painter.drawText(rect, _ss[id].getText(), QTextOption(Qt::AlignCenter));
 
         painter.restore();
@@ -402,17 +402,18 @@ void SingleGame::startComputerMove( ){
             _ss[i]._id=_s[i]. _id;
 //        }
     }
-    qDebug()<<"start comput " ;
+//    qDebug()<<"start comput " ;
     QtConcurrent::run([=](){
-//        multex.lock();
+
         isComputerMoving=true;
-//        multex.unlock();
+
         Step *step= getBestMove();
-//        multex.lock();
+
         isComputerMoving=false;
-//        multex.unlock();
-        qDebug()<<"QtConcurrent---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
-               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+
+//        qDebug()<<"QtConcurrent---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
+//               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+
         //主线程里调用槽函数
 //            QMetaObject::invokeMethod(this,"updateComputerMove", Qt::QueuedConnection,Q_ARG(Step *, step) );
         if(!mStopping)
@@ -438,8 +439,8 @@ void SingleGame::updateComputerMove(Step *step){
         }
 
 
-        qDebug()<<"updateComputerMove---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
-               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
+//        qDebug()<<"updateComputerMove---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
+//               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
         //电脑走棋
         //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
         //记录走棋

@@ -16,6 +16,8 @@ class NetGame : public MyWidget {
     virtual void click(int id, int col, int row) override;
   public slots:
     void slotRecv();
+private:
+    bool mConnected=false;
 };
 
 #endif // NETGAME_H

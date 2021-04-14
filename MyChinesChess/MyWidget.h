@@ -67,8 +67,12 @@ protected:
     void unfakeMove(Step *step);
     void repentanceStep(int backCount);
 
+    int redJIANGId=-1;
+    int blackJIANGId=-1;
+
+    //是否已经输了
     bool isLost(bool bRed);
-    //bRed=true:判断红棋，false：判断黑棋
+    //老将是不是死了   --bRed=true:判断红棋，false：判断黑棋
     bool isJIANGDead(bool bRed);
     bool cannotMoveAnyStone(bool bRed);
     void iAmLost(bool bRed);
@@ -76,11 +80,13 @@ protected:
       QRect mBackRect,mRepentanceRect,mUseTimeRect,mSaveRect,mLoadRect;
       bool bMouseOnBtn=false,bMouseOnBtn1=false,bMouseOnSave=false,bMouseOnLoad=false;
       int mUseTimeId;
+        QPainter p;
       void saveStone();
       void loadStone();
     void drawBoard(QPainter &painter);
-    void drawGameResult(QPainter &painter);
+    void drawGameResult(QPainter &p);
     void drawGameBtns(QPainter &painter);
+
     bool canMoveCHE(int moveId, int col, int row, int killId);
     bool canMoveMA(int moveId, int col, int row, int killId);
     bool canMoveXIANG(int moveId, int col, int row, int killId);

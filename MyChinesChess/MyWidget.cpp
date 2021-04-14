@@ -14,6 +14,7 @@
  * */
 MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent) {
+
     resize(600, 600);
     bMouseOnBtn=false;
     bMouseOnBtn1=false;
@@ -30,7 +31,7 @@ MyWidget::MyWidget(QWidget *parent)
     //   }
     init(true);
 
-#if 1
+#if 0
 //    for (int i = 0; i < 32; ++i) {
 //        if(_s[i]._red&&_s[i]._type==MyStone::BING){
 //           _s[i]._col
@@ -76,6 +77,15 @@ void MyWidget::timerEvent(QTimerEvent *event)
 void MyWidget::init(bool bRedSide) {
     for (int i = 0; i < 32; ++i) {
         _s[i].init(i);
+
+        if( _s[i]._type==MyStone::JIANG){
+            if(i<16){
+                redJIANGId= _s[i]._id;//保存老将的id，以后使用时不用遍历
+            }
+            else{
+                blackJIANGId= _s[i]._id;
+            }
+        }
     }
     if (bRedSide) {
         for (int i = 0; i < 32; ++i) {
@@ -96,9 +106,7 @@ void MyWidget::repentanceStep(int backCount){
         unfakeMove(step);
         mUseTime=0 ;
         update();
-        qDebug()<<"悔棋。"<<_s[step->_moveid].getText()
-                 <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom
-                 <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo;
+        qDebug()<<"悔棋。"<<_s[step->_moveid].getText() <<"fromcol:"<<step->_colFrom<<" fromrow:"<<step->_rowFrom  <<"tocol:"<<step->_colTo<<" torow:"<<step->_rowTo;
         mPassSteps.pop_back();//mPassSteps.removeLast();
         delete step;
         backCount--;
@@ -108,13 +116,9 @@ void MyWidget::repentanceStep(int backCount){
 MyWidget::~MyWidget() {}
 
 void MyWidget::paintEvent(QPaintEvent *) {
-    double colw =1.0* (this->width() - PADDING_LEFT - PADDING_RIGHT) / (COL_COUNT + 2);
-    double rowh = 1.0*(this->height() - PADDING_TOP - PADDING_BOTTOM) / (ROW_COUNT + 2);
-    mColumnWidth = colw;
-    mRowHeight = rowh;
-    _r = colw < rowh ? colw / 2 : rowh / 2;
 
     QPainter p(this);
+
     //棋盘背景图
 //    QPixmap pix(":/res/bg.jpg");
 //    pix=pix.scaled(this->width(),this->height());
@@ -145,7 +149,7 @@ void MyWidget::drawGameBtns(QPainter &p ){
 
     p.setPen(Qt::blue);
     p.drawEllipse(mBackRect);//p.drawRect(mBackRect);
-    p.setFont(QFont("华康少女文字W5(P)", 16, 700));
+    p.setFont(QFont("微软雅黑", 16, 700));
     p.drawText(mBackRect, "返回", QTextOption(Qt::AlignCenter));
 
     if(bMouseOnBtn  ){
@@ -183,33 +187,39 @@ void MyWidget::drawGameBtns(QPainter &p ){
     p.restore();
 }
 
-void MyWidget::resizeEvent(QResizeEvent *event)
+void MyWidget::resizeEvent(QResizeEvent *)
 {
-    event->size();
+//    event->size();
+
+    double colw =1.0* (this->width() - PADDING_LEFT - PADDING_RIGHT) / (COL_COUNT + 2);
+    double rowh = 1.0*(this->height() - PADDING_TOP - PADDING_BOTTOM) / (ROW_COUNT + 2);
+    mColumnWidth = colw;
+    mRowHeight = rowh;
+    _r = colw < rowh ? colw / 2 : rowh / 2;
+
+
     mBackRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50,
                       PADDING_RIGHT-20,25);
-    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,PADDING_TOP+50+25+10,
+    mRepentanceRect=QRect(this->width()-PADDING_RIGHT+10,mBackRect.bottom()+20,
                             PADDING_RIGHT-20,25);
 
-    mSaveRect=QRect(this->width()-PADDING_RIGHT+10,this->PADDING_TOP+50+25+10+35,
+    mSaveRect=QRect(this->width()-PADDING_RIGHT+10,mRepentanceRect.bottom()+20,
                       PADDING_RIGHT-20,25);
-    mLoadRect=QRect(this->width()-PADDING_RIGHT+10,this->PADDING_TOP+50+25+10+65,
+    mLoadRect=QRect(this->width()-PADDING_RIGHT+10,mSaveRect.bottom()+20,
                       PADDING_RIGHT-20,25);
 
     mUseTimeRect=QRect(this->width()-PADDING_RIGHT+10,this->height()-PADDING_BOTTOM-55,
                          PADDING_RIGHT-20,35);
 }
-
-void MyWidget::drawGameResult(QPainter &p ){
-    p.save();
-
+void MyWidget::drawGameResult(QPainter &p){
     if (m_winner == 1 || m_winner == 2) {
+        p.save();
         QRect rect(PADDING_LEFT + mColumnWidth * 3, PADDING_TOP + mRowHeight * 5,  mColumnWidth * 4,  mRowHeight);
         p.setPen(Qt::red);
-        p.setFont(QFont("华康少女文字W5(P)",14,16,true));
-        p.drawText(rect, "游戏结束", QTextOption(Qt::AlignCenter));
+        p.setFont(QFont("微软雅黑",14,16,true));
+        p.drawText(rect, m_winner == 1 ?"你赢了":"你输了", QTextOption(Qt::AlignCenter));
+        p.restore();
     }
-    p.restore();
 }
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event)
@@ -338,7 +348,7 @@ void MyWidget::drawStone(QPainter &painter, int id) {
         painter.setPen(Qt::red);
     }
     //painter.drawEllipse(c, _r - 5, _r - 5);
-    painter.setFont(QFont("华康少女文字W5(P)", _r, 700));
+    painter.setFont(QFont("微软雅黑", _r, 700));
     painter.drawText(rect, _s[id].getText(), QTextOption(Qt::AlignCenter));
 #endif
 
@@ -454,18 +464,35 @@ void MyWidget::drawBoard(QPainter &p) {
     p.drawPath(path);
 
     p.restore();
-
-    QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5,
-                        colw * 3,  rowh);
-    p.setFont(QFont("华康少女文字W5(P)", 24));
+    QRect rect = QRect(PADDING_LEFT + colw * 1, PADDING_TOP + rowh * 5, colw * 3, rowh);
+    p.setFont(QFont("微软雅黑", 24));
     p.setPen(Qt::darkYellow);
-    p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
-//    p.drawRect(rect)    ;
-    rect = QRect(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 5,
-                  colw * 3,  rowh);
 
-    //    p.rotate(45);
-    p.drawText(rect, "汉界", QTextOption(Qt::AlignCenter));
+    QRect rect2 = QRect(PADDING_LEFT + colw * 6, PADDING_TOP + rowh * 5, colw * 3, rowh);
+
+    QTransform transform;
+    //对弈双方的棋盘上绘制不一样的【楚河汉界】
+    if(_bRedSide){
+        p.drawText(rect, "楚河", QTextOption(Qt::AlignCenter));
+        //    p.drawRect(rect)    ;
+
+         p.save();
+         transform.translate(rect2.left()+rect2.width()/2, rect2.top()+rect2.height()/2);
+         transform.rotate(180);
+         p.setTransform(transform);
+//         p.drawRect(QRect( -rect2.width()/2,-rect2.height()/2,rect2.width(),rect2.height()))  ;
+         p.drawText(QRect(-rect2.width()/2,-rect2.height()/2,rect2.width(),rect2.height()), "汉界", QTextOption(Qt::AlignCenter));
+         p.restore();
+    }else{
+        p.save();
+        transform.translate(rect.left()+rect.width()/2, rect.top()+rect.height()/2);
+        transform.rotate(180);
+        p.setTransform(transform);
+        p.drawText(QRect( -rect.width()/2,-rect.height()/2,rect.width(),rect.height()), "楚河", QTextOption(Qt::AlignCenter));
+        p.restore();
+
+        p.drawText(rect2, "汉界", QTextOption(Qt::AlignCenter));
+    }
 
 }
 
@@ -717,16 +744,26 @@ void MyWidget::iAmLost(bool bRed)
 {
     m_winner=bRed?2:1;
 }
+
 bool MyWidget::isJIANGDead(bool bRed ){
-    int min = 16, max = 32;
-    if (bRed) {
-        min = 0, max = 16;
+//    int min = 16, max = 32;
+//    if (bRed) {
+//        min = 0, max = 16;
+//    }
+//    for (int i = min; i < max; i++) {
+//        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
+//            return true;
+//    }
+//return false;
+
+    if(bRed){
+        if(redJIANGId<0) return false;
+        return _s[redJIANGId]._dead;
     }
-    for (int i = min; i < max; i++) {
-        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
-            return true;
+    else{
+        if(blackJIANGId<0) return false;
+        return _s[blackJIANGId]._dead;
     }
-    return false;
 }
 
 int MyWidget::judgeGameOver() {

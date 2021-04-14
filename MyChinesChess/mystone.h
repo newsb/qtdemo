@@ -1,5 +1,6 @@
 #ifndef MYSTONE_H
 #define MYSTONE_H
+
 #include <QString>
 class MyStone {
 
@@ -16,7 +17,8 @@ class MyStone {
     QString getText()const;
     void rotate();
 //    bool isSameColor(MyStone &stone)const;
-
 };
+
+
 
 #endif // MYSTONE_H
