@@ -438,7 +438,7 @@ void SingleGame::updateComputerMove(Step *step){
             _ss[step->_killid]._dead=_s[step->_killid]. _dead;
         }
 
-
+        selectId=step->_moveid;
 //        qDebug()<<"updateComputerMove---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
 //               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
         //电脑走棋
@@ -460,4 +460,5 @@ void SingleGame::updateComputerMove(Step *step){
     m_winner=judgeGameOver();
     update();
     bells->play();
+    checkPlayJiangJun();
 }

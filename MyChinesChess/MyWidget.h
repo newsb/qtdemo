@@ -64,7 +64,7 @@ protected:
     int mLastSelectIdRed,mLastSelectIdBlack;
 
     QSound * bells;
-    QMediaPlayer * bells2;
+    QSound * bells2;
     void saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps);
     QVector<Step *>  mPassSteps;
 //    void logStep(int moveId, int killId, int col, int row);
@@ -80,6 +80,8 @@ protected:
     bool isJIANGDead(bool bRed);
     bool cannotMoveAnyStone(bool bRed);
     void iAmLost(bool bRed);
+
+    void checkPlayJiangJun();
   private:
       QRect mBackRect,mRepentanceRect,mUseTimeRect,mSaveRect,mLoadRect;
       bool bMouseOnBtn=false,bMouseOnBtn1=false,bMouseOnSave=false,bMouseOnLoad=false;
@@ -87,6 +89,8 @@ protected:
         QPainter p;
       void saveStone();
       void loadStone();
+
+
     void drawBoard(QPainter &painter);
     void drawGameResult(QPainter &p);
     void drawGameBtns(QPainter &painter);
@@ -98,7 +102,6 @@ protected:
     bool canMoveJIANG(int moveId, int col, int row, int killId);
     bool canMovePAO(int moveId, int col, int row, int killId);
     bool canMoveBING(int moveId, int col, int row, int killId);
-
 
 protected:
     virtual void paintEvent(QPaintEvent *event) override;

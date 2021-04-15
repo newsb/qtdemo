@@ -3,6 +3,6 @@
         <file>res/bg.jpg</file>
         <file>res/2.png</file>
         <file>res/bell.wav</file>
-        <file>res/jiangjun.mp3</file>
+        <file>res/jiangjun.wav</file>
     </qresource>
 </RCC>

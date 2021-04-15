@@ -59,10 +59,7 @@ MyWidget::MyWidget(QWidget *parent)
 
     bells=new QSound(":/res/bell.wav");
 
-     bells2 = new QMediaPlayer;
-
-    bells2->setMedia(QUrl(":/res/jiangjun.mp3"));
-    bells2->setVolume(50);
+    bells2 = new QSound(":/res/jiangjun.wav");
 //    bells2->play();
 
 }
@@ -703,6 +700,25 @@ bool MyWidget::canMoveBING(int moveId, int col, int row, int) {
     return d == 1 || d == 10;
 }
 
+void MyWidget::checkPlayJiangJun()
+{
+    if(selectId<0) return;
+    //如果下一步kill将，
+    int min=0,max=16;
+    int jid=blackJIANGId;
+    if(!_s[selectId]._red){
+        min=16,max=32;
+        jid=redJIANGId;
+    }
+    for (int i = min; i < max; ++i) {
+        if(!_s[i]._dead){
+            if(canMove(i,_s[jid]._col,_s[jid]._row,jid)){
+                bells2->play();
+            }
+        }
+    }
+}
+
 //是否输了，bRed=红棋
 bool MyWidget::isLost(bool bRed){
     if(isJIANGDead(bRed)){
@@ -779,6 +795,7 @@ int MyWidget::judgeGameOver() {
          return 1;
     }
 
+
     return 0;
 }
 bool MyWidget::canMoveCHE(int moveId, int col, int row, int) {
@@ -846,13 +863,15 @@ void MyWidget::click(int id, int col, int row) {
             }else{
                 mLastSelectIdBlack=selectId;
             }
+
+            update();
+            bells->play();
+            checkPlayJiangJun();
+            m_winner=judgeGameOver();
+
             selectId = -1;
 
             mUseTime=0;
-            update();
-            m_winner=judgeGameOver();
-
-            bells->play();
         }
     }
 }
@@ -925,14 +944,6 @@ void MyWidget::saveStep(int moveId, int killId, int col, int row, QVector<Step *
     step->_moveid = moveId;
 
     steps.append(step);
-    //如果killid是将，，，、
-    if(killId>-1&&_s[killId]._type==MyStone::JIANG){
-//        QMediaPlayer * bells2 = new QMediaPlayer;
-
-//        bells2->setMedia(QUrl(":/res/jiangjun.mp3"));
-//        bells2->setVolume(100);
-         bells2->play();
-    }
 }
 
 //void MyWidget::logStep(int moveId, int killId, int col, int row)
@@ -956,7 +967,6 @@ void MyWidget::saveStone(){
     s+= bTranRed?"1\n":"0\n" ;
     for (int i=0;i<32;i++) {
         //if (!_s[i]._dead){
-
         s+= QString::number( _s[i]._id)+","+QString::number( _s[i]._dead)+","
              +QString::number( _s[i]._col)+","+QString::number( _s[i]._row)+"\n";
         //}
