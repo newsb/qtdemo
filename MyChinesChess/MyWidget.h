@@ -9,6 +9,11 @@
 #include <QSound>
 #include <QMediaPlayer>
 
+/**TODO :  将军的时候，特殊语音提示；
+        将军的时候，不允许动其他棋子
+        加载残棋
+    检查将军的声音再网络对战是否正常
+* */
 class MyWidget : public QWidget {
     Q_OBJECT
   public:

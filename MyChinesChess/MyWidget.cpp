@@ -4,11 +4,7 @@
 #include <QPainter>
 #include <QtMath>
 #include <QFileDialog>
-/**TODO :  将军的时候，特殊语音提示；
-        将军的时候，不允许动其他棋子
-        加载残棋
 
- * */
 MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent) {
 
