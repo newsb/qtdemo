@@ -438,11 +438,7 @@ void SingleGame::updateComputerMove(Step *step){
             _ss[step->_killid]._dead=_s[step->_killid]. _dead;
         }
 
-        selectId=step->_moveid;
-//        qDebug()<<"updateComputerMove---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
-//               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
-        //电脑走棋
-        //logStep(step->_moveid,step->_killid, step->_colTo, step->_rowTo);
+//        selectId=step->_moveid;
         //记录走棋
         saveStep(step->_moveid, step->_killid, step->_colTo, step->_rowTo, mPassSteps);
         //qDebug()<<"add step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid<<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
@@ -455,10 +451,12 @@ void SingleGame::updateComputerMove(Step *step){
         }else{
             mLastSelectIdBlack=step->_moveid;
         }
+        bells->play();
+        checkPlayJiangJun(step->_moveid);
         delete step;
     }
     m_winner=judgeGameOver();
     update();
-    bells->play();
-    checkPlayJiangJun();
+
+
 }

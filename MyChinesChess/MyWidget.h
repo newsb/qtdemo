@@ -86,7 +86,7 @@ protected:
     bool cannotMoveAnyStone(bool bRed);
     void iAmLost(bool bRed);
 
-    void checkPlayJiangJun();
+    void checkPlayJiangJun(int checkId=-1);
   private:
       QRect mBackRect,mRepentanceRect,mUseTimeRect,mSaveRect,mLoadRect;
       bool bMouseOnBtn=false,bMouseOnBtn1=false,bMouseOnSave=false,bMouseOnLoad=false;

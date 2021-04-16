@@ -56,7 +56,6 @@ MyWidget::MyWidget(QWidget *parent)
     bells=new QSound(":/res/bell.wav");
 
     bells2 = new QSound(":/res/jiangjun.wav");
-//    bells2->play();
 
 }
 
@@ -696,13 +695,14 @@ bool MyWidget::canMoveBING(int moveId, int col, int row, int) {
     return d == 1 || d == 10;
 }
 
-void MyWidget::checkPlayJiangJun()
+void MyWidget::checkPlayJiangJun(int checkId)
 {
-    if(selectId<0) return;
+
+    if(checkId<0) return;
     //如果下一步kill将，
     int min=0,max=16;
     int jid=blackJIANGId;
-    if(!_s[selectId]._red){
+    if(!_s[checkId]._red){
         min=16,max=32;
         jid=redJIANGId;
     }
@@ -725,6 +725,7 @@ bool MyWidget::isLost(bool bRed){
     }
     return false;
 }
+
 //bRed=true:判断红棋，false：判断黑棋
 bool MyWidget::cannotMoveAnyStone(bool bRed){
     //该红走的时候：红棋都不能走，红棋输
@@ -753,7 +754,6 @@ bool MyWidget::cannotMoveAnyStone(bool bRed){
         }
     }
     return true;
-
 }
 
 void MyWidget::iAmLost(bool bRed)
@@ -762,15 +762,15 @@ void MyWidget::iAmLost(bool bRed)
 }
 
 bool MyWidget::isJIANGDead(bool bRed ){
-//    int min = 16, max = 32;
-//    if (bRed) {
-//        min = 0, max = 16;
-//    }
-//    for (int i = min; i < max; i++) {
-//        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
-//            return true;
-//    }
-//return false;
+    //    int min = 16, max = 32;
+    //    if (bRed) {
+    //        min = 0, max = 16;
+    //    }
+    //    for (int i = min; i < max; i++) {
+    //        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
+    //            return true;
+    //    }
+    //return false;
 
     if(bRed){
         if(redJIANGId<0) return false;
@@ -859,15 +859,15 @@ void MyWidget::click(int id, int col, int row) {
             }else{
                 mLastSelectIdBlack=selectId;
             }
-
-            update();
-            bells->play();
-            checkPlayJiangJun();
-            m_winner=judgeGameOver();
-
+            int oldId=selectId;
             selectId = -1;
 
             mUseTime=0;
+            update();
+            m_winner=judgeGameOver();
+            bells->play();
+
+            checkPlayJiangJun(oldId);
         }
     }
 }
