@@ -734,31 +734,7 @@ bool MyWidget::cannotMoveAnyStone(bool bRed){
     return true;
 }
 
-void MyWidget::iAmLost(bool bRed)
-{
-    m_winner=bRed?2:1;
-}
 
-bool MyWidget::isJIANGDead(bool bRed ){
-    //    int min = 16, max = 32;
-    //    if (bRed) {
-    //        min = 0, max = 16;
-    //    }
-    //    for (int i = min; i < max; i++) {
-    //        if (_s[i]._dead&&_s[i]._type==MyStone::JIANG)
-    //            return true;
-    //    }
-    //return false;
-
-    if(bRed){
-        if(redJIANGId<0) return false;
-        return _s[redJIANGId]._dead;
-    }
-    else{
-        if(blackJIANGId<0) return false;
-        return _s[blackJIANGId]._dead;
-    }
-}
 
 int MyWidget::judgeGameOver() {
     if (m_winner!=0)return m_winner;
@@ -906,7 +882,7 @@ void MyWidget::moveStone(int moveId, int col, int row) {
     bTranRed = !bTranRed;
 }
 void MyWidget::saveStep(int moveId, int killId, int col, int row, QVector<Step *> &steps) {
-    // getColRow() ;
+    //TODO:禁止长将
     int row1 = _s[moveId]._row;
     int col1 = _s[moveId]._col;
     Step *step = new Step;

@@ -85,9 +85,19 @@ protected:
     //是否已经输了
     bool isLost(bool bRed);
     //老将是不是死了   --bRed=true:判断红棋，false：判断黑棋
-    bool isJIANGDead(bool bRed);
+    inline bool isJIANGDead(bool bRed){
+        if(bRed){
+            if(redJIANGId<0) return false;
+            return _s[redJIANGId]._dead;
+        }else{
+            if(blackJIANGId<0) return false;
+            return _s[blackJIANGId]._dead;
+        }
+    };
     bool cannotMoveAnyStone(bool bRed);
-    void iAmLost(bool bRed);
+    inline void iAmLost(bool bRed)  {
+        m_winner=bRed?2:1;
+    };
 
     void checkPlayJiangJun(int checkId=-1);
   private:
@@ -120,6 +130,7 @@ protected:
     //画棋子
     virtual void drawStone(QPainter &painter, int id);
  signals:
+     //悔棋
      void back_signal();
      void repentance_signal(int backCount);
 
