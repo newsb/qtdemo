@@ -404,16 +404,9 @@ void SingleGame::startComputerMove( ){
     }
 //    qDebug()<<"start comput " ;
     QtConcurrent::run([=](){
-
         isComputerMoving=true;
-
         Step *step= getBestMove();
-
         isComputerMoving=false;
-
-//        qDebug()<<"QtConcurrent---------> step  "<<"moveId:"<<step->_moveid<<"killId:"<<step->_killid
-//               <<"col:"<<step->_colTo<<"row:"<<step->_rowTo;
-
         //主线程里调用槽函数
 //            QMetaObject::invokeMethod(this,"updateComputerMove", Qt::QueuedConnection,Q_ARG(Step *, step) );
         if(!mStopping)

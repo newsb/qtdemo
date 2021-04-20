@@ -34,7 +34,7 @@ signals:
     void computerMoveFinished(Step *step);
 public:
     virtual QPointF center(int id )override;
-
+ MyStone  _ss[32];
 private:
     QMutex multex;
     bool mStopping=false;

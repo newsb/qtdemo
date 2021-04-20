@@ -9,10 +9,13 @@
 #include <QSound>
 #include <QMediaPlayer>
 
-/**TODO :  将军的时候，特殊语音提示；
+/**TODO :
         将军的时候，不允许动其他棋子
         加载残棋
-    检查将军的声音再网络对战是否正常
+       检查将军的声音再网络对战是否正常?
+        多线程计算走棋
+    bug-多走几步，界面刷新有问题
+
 * */
 class MyWidget : public QWidget {
     Q_OBJECT
@@ -35,7 +38,7 @@ class MyWidget : public QWidget {
     double _r;
     //棋盘格子高、宽
     double mColumnWidth, mRowHeight;
-    MyStone _s[32],_ss[32];
+    MyStone _s[32] ;
     int selectId = -1; //选择的棋子id
     int m_winner = 0;  // 0:未结束； 1：红棋赢；2：黑旗赢
 

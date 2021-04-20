@@ -275,52 +275,30 @@ void MyWidget::drawStone(QPainter &painter, int id) {
     painter.setPen(QPen(QBrush(Qt::magenta),3) );
     QRectF rect2 = QRectF(c.x() - _r-5, c.y() - _r-5, 2 * _r+10, 2 * _r+10);
 
-//            QRect rect3(rect2.left(),
-//                        rect2.top(),
-//                        rect2.width()+20,
-//                        rect2.height()+20 );
     if(mLastSelectIdRed==id || mLastSelectIdBlack==id){
 //        painter.drawRect(rect2);
         QPainterPath path;
-//        int spanRad=60;
-//        int dRad=(90-spanRad)/2;
 
         int dr1=_r-10;
         path.moveTo(rect2.left(), rect2.top());
         path.lineTo(rect2.left(), rect2.top()+dr1);
         path.moveTo(rect2.left(), rect2.top());
         path.lineTo(rect2.left()+dr1, rect2.top());
-//        rect3.setLeft(rect2.left()-20);
-//        rect3.setTop(rect2.top()-20);
-//        path.arcTo(rect3 , 90+dRad,spanRad);
 
         path.moveTo(rect2.right()-dr1, rect2.top());
         path.lineTo(rect2.right() , rect2.top());
         path.lineTo(rect2.right(), rect2.top()+dr1);
-
-//        rect3.setLeft(rect2.left()+20);
-//        rect3.setTop(rect2.top());
-//        path.arcTo(rect3,0+dRad,spanRad);
 
         path.moveTo(rect2.left(), rect2.bottom()-dr1);
         path.lineTo(rect2.left() ,rect2.bottom());
         path.lineTo(rect2.left()+dr1 ,rect2.bottom());
         path.moveTo(rect2.left(), rect2.bottom()-dr1);
 
-//        rect3.setTop(rect2.top()-20);
-//        rect3.setLeft(rect2.left());
-//        path.arcTo(rect3,180+dRad,spanRad);
-
         path.moveTo(rect2.right()-dr1, rect2.bottom() );
         path.lineTo(rect2.right() ,rect2.bottom());
         path.lineTo(rect2.right() ,rect2.bottom()-dr1);
         path.moveTo(rect2.right()-dr1, rect2.bottom() );
 
-//        rect3.setTop(rect2.top()-20);
-//        rect3.setLeft(rect2.left()-20);
-//        path.arcTo(rect2,270+dRad,spanRad);
-
-//        painter.setPen(Qt::darkBlue);
         painter.drawPath(path);
     }
     painter.setBrush(oldB);
