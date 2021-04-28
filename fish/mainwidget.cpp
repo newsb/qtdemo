@@ -4,6 +4,7 @@
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent) {
+
     setFixedSize(800, 533);
     setWindowIcon(QIcon("res/Fish_Icon.png"));
     setWindowTitle("捕鱼达人");
