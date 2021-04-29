@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "gameview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -17,5 +18,6 @@ public:
 
 private:
     Ui::Widget *ui;
+    GameView *gameView;
 };
 #endif // WIDGET_H

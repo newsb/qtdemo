@@ -4,6 +4,7 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
       , ui(new Ui::Widget)
+      ,gameView(new GameView(parent))
 {
     ui->setupUi(this);
 }

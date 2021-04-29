@@ -1,0 +1,18 @@
+D:\Qt\Qt5.14.2\5.14.2\Src\qtwebengine\tests\auto\core\qwebengineurlrequestinterceptor\resources\media.mp4
+
+ffmpeg -i "D:\Qt\Qt5.14.2\5.14.2\Src\qtmultimedia\tests\auto\integration\qmediaplayerbackend\testdata\colors.mp4" %d.jpg
+
+ffplay -i "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  
+
+ffprobe -i "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  
+ffprobe -show_format "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  >>d:\show_format.txt
+
+ffprobe -print_format json  2018121051.mp4
+
+ffprobe -print_format json -show_streams  "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  >>d:\print_format.txt
+
+#ffprobe显示帧信息的命令:
+ffprobe -show_frames "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  >>d:\show_frames.txt
+
+ffprobe查看包信息的命令:
+ ffprobe -show_packets "D:\myVideo\61e47576a3e827d6520150dee83b69ee.mp4"  >>d:\show_packets.txt

@@ -3,20 +3,31 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QRandomGenerator>
 
 MyFish::MyFish(const QString &filename, QGraphicsScene *scene)
-    : MyPixmapItem(filename, scene) {
-    setPos(-scene->width() / 2, scene->height() - 33);
+    : MyPixmapItem(filename, scene)
+    {
+    setPos(-scene->width() / 2, scene->height() - QRandomGenerator::global()->bounded(300) );
     //    setPos(0, 0);
 }
 
-void MyFish::death() { setPos(-100, 88); }
+//#include <QTime>
+void MyFish::death() {
+    //    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));          //设置随机数种子
+    //    int value=qrand() % 300;
+    quint32 value =200 + QRandomGenerator::global()->bounded(300) ;
+
+    setPos(-100, value);
+//    qDebug()<<value;
+}
 
 void MyFish::advance(int) {
     if (mapToScene(0, 0).y() <= 0 || mapToScene(0, 0).x() >= 800 || mapToScene(0, 0).y() >= 800) {
-        setPos(-130, 200 + qrand() % 300);
+        setPos(-130, 200 + QRandomGenerator::global()->bounded(300));
     } else {
-        int speed = rand() % 10;
+//        int speed = rand() % 10;
+        int speed = QRandomGenerator::global()->bounded(10) ;
         if (speed % 2 == 0) {
             setPos(mapToScene(speed, -2));
         } else {
