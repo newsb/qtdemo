@@ -1,11 +1,13 @@
 #include "widget.h"
+#include "gameview.h"
 
 #include <QApplication>
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Widget w;
+    GameView w;
     w.show();
     return a.exec();
 }

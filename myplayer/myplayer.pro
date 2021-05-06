@@ -1,6 +1,7 @@
 QT       += core gui
 QT += multimedia
 QT += multimediawidgets
+QT += concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -18,13 +19,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    mycountthread.cpp \
+    mycountthreadwork.cpp \
+    myrunnablework.cpp \
+    mywidget.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    mycountthread.h \
+    mycountthreadwork.h \
+    myrunnablework.h \
+    mywidget.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    mywidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -7,6 +7,8 @@ Widget::Widget(QWidget *parent)
       ,gameView(new GameView(parent))
 {
     ui->setupUi(this);
+
+
 }
 
 Widget::~Widget()

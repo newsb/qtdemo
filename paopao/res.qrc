@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/brick.jpg</file>
+        <file>res/space.jpg</file>
+        <file>res/wall.jpg</file>
+    </qresource>
+</RCC>

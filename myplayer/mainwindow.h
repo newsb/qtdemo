@@ -31,5 +31,13 @@ private:
     QMediaPlayer *_pMediaPlayer;
     QMediaPlaylist *_pMediaPlaylist;
 
+
+    // QWidget interface
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
+
+    // QWidget interface
+protected:
+    virtual void contextMenuEvent(QContextMenuEvent *event) override;
 };
 #endif // MAINWINDOW_H

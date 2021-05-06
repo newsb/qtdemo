@@ -17,11 +17,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
     mapwidget.cpp
 
 HEADERS += \
-    mainwindow.h \
     mapwidget.h
 
 # Default rules for deployment.
