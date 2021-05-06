@@ -15,7 +15,6 @@ GameView::GameView(QWidget *parent) : QGraphicsView(parent)
 
 
 //初始化四周的墙壁
-//随机生成砖块
 void GameView::initData(){
 
     //首尾列
@@ -28,10 +27,10 @@ void GameView::initData(){
         map[0][i]=WALL;
         map[ROW-1][i]=WALL;
     }
-    //中间的墙
+    //随机生成砖块
     for (int r=0;r<ROW;r++) {
         for (int c=0;c<COL;c++) {
-            if(map[r][c]!=WALL){
+            if(map[r][c]==SPACE){
                 quint32 rand =QRandomGenerator::global()->bounded(3);
 //                qDebug()<<"rand=="<<rand;
                 if(rand==2){
