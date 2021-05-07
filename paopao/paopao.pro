@@ -17,11 +17,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     gameview.cpp \
+    global.cpp \
     main.cpp \
+    player.cpp \
     widget.cpp
 
 HEADERS += \
     gameview.h \
+    global.h \
+    player.h \
     widget.h
 
 FORMS += \

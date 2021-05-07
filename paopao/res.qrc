@@ -3,5 +3,6 @@
         <file>res/brick.jpg</file>
         <file>res/space.jpg</file>
         <file>res/wall.jpg</file>
+        <file>res/player.png</file>
     </qresource>
 </RCC>

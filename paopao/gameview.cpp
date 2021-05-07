@@ -1,6 +1,6 @@
 #include "gameview.h"
 #include <QDebug>
-#include <QRandomGenerator>
+
 GameView::GameView(QWidget *parent) : QGraphicsView(parent)
       ,mScene(new QGraphicsScene(this))
 {
@@ -10,12 +10,14 @@ GameView::GameView(QWidget *parent) : QGraphicsView(parent)
 //    mScene->setSceneRect(-WIN_WIDTH / 2, -WIN_HEIGHT / 2, WIN_WIDTH, WIN_HEIGHT);
 
     this->setScene(mScene);
-    initData();
+    initGameData();
+    mPlayer=new Player;
+    mScene->addItem(mPlayer);
 }
 
-
+#include "global.h"
 //初始化四周的墙壁
-void GameView::initData(){
+void  GameView::initGameData(){
 
     //首尾列
     for(int i=0;i<ROW;i++){
@@ -48,15 +50,15 @@ void GameView::drawBackground(QPainter *painter, const QRectF &rect)
         for (int c=0;c<COL;c++) {
             switch (map[r][c]) {
             case WALL:
-                painter->drawPixmap(c*WALL_BRICK_SIZE,r*WALL_BRICK_SIZE
+                painter->drawPixmap(rowCol2Coordinate(r,c)
                                     ,QPixmap(":/res/wall.jpg").scaled(WALL_BRICK_SIZE,WALL_BRICK_SIZE));
                 break;
             case BRICK:
-                painter->drawPixmap(c*WALL_BRICK_SIZE,r*WALL_BRICK_SIZE
+                painter->drawPixmap(rowCol2Coordinate(r,c)
                                     ,QPixmap(":/res/brick.jpg").scaled(WALL_BRICK_SIZE,WALL_BRICK_SIZE));
                 break;
             case SPACE:
-                painter->drawPixmap(c*WALL_BRICK_SIZE,r*WALL_BRICK_SIZE
+                painter->drawPixmap(rowCol2Coordinate(r,c)
                                     ,QPixmap(":/res/space.jpg").scaled(WALL_BRICK_SIZE,WALL_BRICK_SIZE));
                 break;
             default:
@@ -64,4 +66,28 @@ void GameView::drawBackground(QPainter *painter, const QRectF &rect)
             }
         }
     }
+}
+
+#include <QKeyEvent>
+void GameView::keyPressEvent(QKeyEvent *event)
+{
+    QGraphicsView::keyPressEvent(event);
+    switch (event->key()) {
+        case Qt::Key_Left:
+            mPlayer->walkAStep(Player::LEFT);
+            break;
+        case Qt::Key_Right:
+            mPlayer->walkAStep(Player::RIGHT);
+            break;
+        case Qt::Key_Up:
+            mPlayer->walkAStep(Player::UP);
+            break;
+        case Qt::Key_Down:
+            mPlayer->walkAStep(Player::DOWN);
+            break;
+        case Qt::Key_Space:
+            mPlayer->putBubble();
+            break;
+    }
+
 }
