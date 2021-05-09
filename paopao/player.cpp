@@ -50,65 +50,66 @@ bool Player::walkAStep(Player::Direction direct)
 
             ATTR attr=attrAt(pt);
             if(attr!=SPACE){
-                    canWalk= false;
+                canWalk= false;
             }
             break;
        }
         case DOWN:{
-                pt.ry()+=STEP_UNIT ;
-                mPix=&pixFront;
+//            pt.ry()+=STEP_UNIT ;
+            mPix=&pixFront;
 
-                ATTR attr=attrAt(pt);
-                if(attr!=SPACE){
-                    attr=attrAt(QPoint(pt.x(),pt.y()+mPix->height()));
-                     if(attr!=SPACE){
-                        canWalk= false;
-                    }
-                }
-                break;
+            ATTR attr=attrAt(QPoint(pt.x(),pt.y()+mPix->height()));
+            if(attr!=SPACE){
+//                attr=attrAt(QPoint(pt.x(),pt.y()+mPix->height()));
+                qDebug()<<"found attr:"<<attr;
+//                if(attr!=SPACE){
+                    canWalk= false;
+//                }
+            }
+            break;
         }
         case LEFT:{
-                pt.rx()-=STEP_UNIT;
-                mPix=&pixLeft;
+            pt.rx()-=STEP_UNIT;
+            mPix=&pixLeft;
 
-                ATTR attr=attrAt(pt);
-                if(attr!=SPACE){
-                        canWalk= false;
-                }
+            ATTR attr=attrAt(pt);
+            if(attr!=SPACE){
+                    canWalk= false;
+            }
 
-                break;
+            break;
         }
         case RIGHT:{
-                pt.rx()+=STEP_UNIT;
-                mPix=&pixRight;
+//            pt.rx()+=STEP_UNIT;
+            mPix=&pixRight;
 
-                ATTR attr=attrAt(pt);
-                if(attr!=SPACE){
-                    attr=attrAt(QPoint(pt.x()+mPix->width(),pt.y()));
-                     if(attr!=SPACE){
-                        canWalk= false;
-                    }
-                }
-                break;
+            ATTR attr=attrAt(QPoint(pt.x()+mPix->width(),pt.y()));
+            if(attr!=SPACE){
+//                attr=attrAt(QPoint(pt.x()+mPix->width(),pt.y()));
+//                 if(attr!=SPACE){
+                    canWalk= false;
+//                }
+            }
+            break;
         }
     }
 
 
     if(canWalk){
-           switch (direct) {
-               case UP:
-                   mCurrentPostion.ry()-=STEP_UNIT;
-                   break;
-               case DOWN:
-                   mCurrentPostion.ry()+=STEP_UNIT ;
-                   break;
-               case LEFT:
-                   mCurrentPostion.rx()-=STEP_UNIT;
-                   break;
-               case RIGHT:
-                   mCurrentPostion.rx()+=STEP_UNIT;
-                   break;
-           }
+       switch (direct) {
+           case UP:
+               mCurrentPostion.ry()-=STEP_UNIT;
+               break;
+           case DOWN:
+               mCurrentPostion.ry()+=STEP_UNIT ;
+               break;
+           case LEFT:
+               mCurrentPostion.rx()-=STEP_UNIT;
+               break;
+           case RIGHT:
+               mCurrentPostion.rx()+=STEP_UNIT;
+               break;
+       }
     }
     setPos(mCurrentPostion);
     return canWalk;
