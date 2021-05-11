@@ -19,17 +19,18 @@ public:
 signals:
 
 private:
-
+    void setBubbleAt(QPoint pt);
+    ATTR attrAt(int row,int col);
+    ATTR attrAt(QPoint pt);
     QGraphicsScene *mScene;
     Player * mPlayer;
     QList<MyPaoPao*> mPaoPaoList;
-    Cell mMap[ROW][COL];
+    Cell * mMap[ROW][COL];
 
     void initGameData();
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rect) override;
 
-    // QWidget interface
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 };

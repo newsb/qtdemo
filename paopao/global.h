@@ -18,7 +18,7 @@ enum ATTR{
     UNDEFINE
 };
 //地图map
-extern ATTR map[ROW][COL];//全局变量初始化为0，（SPACE）  //类的成员不会初始化为0,必须手动赋值
+//extern ATTR map[ROW][COL];//全局变量初始化为0，（SPACE）  //类的成员不会初始化为0,必须手动赋值
 
 
 //extern struct pdesc const cameractrl_params[];
@@ -31,9 +31,9 @@ extern ATTR map[ROW][COL];//全局变量初始化为0，（SPACE）  //类的成
 //};
 
 //返回map中元素类型
-extern ATTR attrAt(int row,int col);
+//extern ATTR attrAt(int row,int col);
 #include <QPoint>
-extern ATTR attrAt(QPoint pt);
+//extern ATTR attrAt(QPoint pt);
 
 
 //坐标 映射到行和列
@@ -41,7 +41,7 @@ extern QPoint coordinate2RowCol(QPoint coor);
 //行和列  映射到 坐标
 extern QPoint rowCol2Coordinate(int r,int c);
 
-extern void setBubbleAt(QPoint pt);
+//extern void setBubbleAt(QPoint pt);
 
 extern QPoint getNearestPoint(QPoint coor);
 

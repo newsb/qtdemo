@@ -7,12 +7,11 @@
 class Cell : public QGraphicsItem
 {
 public:
-    Cell(QGraphicsItem *parent = nullptr);
+    Cell(ATTR attr,int row,int col,QGraphicsItem *parent = nullptr);
 
     int mRow,mCol;
     ATTR mAttr=UNDEFINE;
 
-    // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

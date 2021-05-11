@@ -12,13 +12,14 @@ public:
     explicit Player(QGraphicsItem *parent = nullptr);
     ~Player();
     enum Direction{UP,DOWN,LEFT,RIGHT};
-    bool walkAStep(Direction direct);
-    void putBubble();
-    const int STEP_UNIT=20;
-signals:
-private:
+//    bool walkAStep(Direction direct);
+//    void putBubble();
+    static const int STEP_UNIT=20;
     QPixmap * mPix;
     QPixmap pixFront, pixBack,pixLeft,pixRight;
+
+signals:
+private:
     int pix_width,pix_height;
 public:
     //当前人物位置
