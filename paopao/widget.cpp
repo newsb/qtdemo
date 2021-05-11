@@ -7,7 +7,7 @@ Widget::Widget(QWidget *parent)
       ,gameView(new GameView(parent))
 {
     ui->setupUi(this);
-
+    ui->pushButton->setFlat(true);
 
 }
 

@@ -4,5 +4,6 @@
         <file>res/space.jpg</file>
         <file>res/wall.jpg</file>
         <file>res/player.png</file>
+        <file>res/paopao.png</file>
     </qresource>
 </RCC>

@@ -14,6 +14,7 @@ enum ATTR{
     SPACE,//空白
     WALL,//墙壁（不能炸）、
     BRICK,//砖块(可炸）
+    BUBBLE,//炸弹
     UNDEFINE
 };
 //地图map
@@ -40,7 +41,9 @@ extern QPoint coordinate2RowCol(QPoint coor);
 //行和列  映射到 坐标
 extern QPoint rowCol2Coordinate(int r,int c);
 
+extern void setBubbleAt(QPoint pt);
 
+extern QPoint getNearestPoint(QPoint coor);
 
 
 #endif // GLOBAL_H

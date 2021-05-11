@@ -20,9 +20,9 @@ private:
     QPixmap * mPix;
     QPixmap pixFront, pixBack,pixLeft,pixRight;
     int pix_width,pix_height;
+public:
     //当前人物位置
     QPoint mCurrentPostion;
-    // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

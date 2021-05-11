@@ -6,7 +6,9 @@
 #include <QGraphicsScene>
 #include "player.h"
 
-
+#include "mypaopao.h"
+#include "cell.h"
+#include "global.h"
 
 class GameView : public QGraphicsView
 {
@@ -20,6 +22,9 @@ private:
 
     QGraphicsScene *mScene;
     Player * mPlayer;
+    QList<MyPaoPao*> mPaoPaoList;
+    Cell mMap[ROW][COL];
+
     void initGameData();
 protected:
     virtual void drawBackground(QPainter *painter, const QRectF &rect) override;
