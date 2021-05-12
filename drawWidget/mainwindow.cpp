@@ -42,9 +42,9 @@ void MainWindow::createToolBar() {
     //创建线宽选择控件
 
     widthSpinBox = new QSpinBox;
-    void (QSpinBox::*fun)(int) = &QSpinBox::valueChanged;
-    //        connect(widthSpinBox, SIGNAL(valueChanged(int)), drawWidget, SLOT(setwidth(int)));
-    connect(widthSpinBox, fun, drawWidget, SLOT(setwidth(int)));
+            connect(widthSpinBox, SIGNAL(valueChanged(int)), drawWidget, SLOT(setwidth(int)));
+//            void (QSpinBox::*fun)(int) = &QSpinBox::valueChanged;
+//    connect(widthSpinBox, fun, drawWidget, SLOT(setwidth(int)));
     colorBtn = new QToolButton;
     //创建颜色选择控件
     QPixmap pixmap(20, 20);
