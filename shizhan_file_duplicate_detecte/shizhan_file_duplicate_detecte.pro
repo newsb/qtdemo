@@ -17,9 +17,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
+    mymd5.cpp \
     widget.cpp
 
 HEADERS += \
+    mymd5.h \
     widget.h
 
 FORMS += \

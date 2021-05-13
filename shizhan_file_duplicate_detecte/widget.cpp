@@ -5,6 +5,8 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
+    ,myThread(new QThread())
+    ,mymd5(new MyMd5())
 {
     ui->setupUi(this);
 
@@ -29,6 +31,14 @@ Widget::Widget(QWidget *parent)
 
 
     this->layout()->setMargin(9);
+
+
+    mymd5->moveToThread(myThread);
+    myThread->start();
+    connect(this,&Widget::startCalcMd5,mymd5,&MyMd5::onStartCalcMd5);
+    connect(mymd5,&MyMd5::progress_changed,this,&Widget::onMyProgressChanged);
+    connect(mymd5,&MyMd5::calcMd5Finished,this,&Widget::onCalcMd5Finished);
+
 }
 
 Widget::~Widget()
@@ -37,6 +47,11 @@ Widget::~Widget()
 }
 
 
+
+void Widget::onMyProgressChanged(int progress)
+{
+    ui->progressBar->setValue(progress);
+}
 
 #include <QMouseEvent>
 
@@ -89,3 +104,105 @@ void Widget::on_btnMin_clicked()
 {
     this->showMinimized();
 }
+
+#include <QFileDialog>
+#include <QDebug>
+
+void Widget::on_pushButton_clicked()
+{
+    mDuplication.clear();
+
+    QString path=QFileDialog::getExistingDirectory(this,"select a dir",".");
+    if(path.isEmpty()) return ;
+
+    qDebug()<<"path："<<path;
+    ui->lineEdit->setText(path);
+
+    //遍历目录下的所有文件和子文件
+    QStringList list=getFiles(path);
+    ui->progressBar->setMaximum(list.count());
+    ui->progressBar->setValue(0);
+
+    emit startCalcMd5(list);
+
+
+//    for(int i=0;i<list.count();i++){
+//        QString filename=list.at(i);
+//        QByteArray md5=getFileMd5(filename);
+
+//        mDuplication[md5].append(filename);
+//        ui->progressBar->setValue(i+1);
+//    }
+
+//    //显示结果
+//    ui->listWidget->clear();
+//    for (QHash<QByteArray,QStringList>::iterator it=mDuplication.begin();it!=mDuplication.end();++it) {
+//        if(it.value().count()>1){
+//            ui->listWidget->addItem(it.key());
+
+//            qDebug()<<it.value();
+//        }
+//    }
+}
+
+void Widget::onCalcMd5Finished(QHash<QByteArray,QStringList> list){
+    mDuplication=list;
+    //显示结果
+    ui->listWidget->clear();
+    for (QHash<QByteArray,QStringList>::iterator it=mDuplication.begin();it!=mDuplication.end();++it) {
+        if(it.value().count()>1){
+            ui->listWidget->addItem(it.key());
+
+            qDebug()<<it.value();
+        }
+    }
+}
+
+void Widget::on_listWidget_currentTextChanged(const QString &currentText)
+{
+    ui->listWidget_2->clear();
+    QStringList currList=mDuplication[currentText.toLocal8Bit()];
+    ui->listWidget_2->addItems(currList);
+//ui->listWidget_2->addItem()
+}
+
+#include <QProcess>
+#include <windows.h>
+
+void Widget::on_listWidget_2_itemDoubleClicked(QListWidgetItem *item)
+{
+    QString filename=item->text();
+//    filename=filename.replace("\\","\\\\");
+    //！！使用系统默认打开方式打开文件
+//    QStringList param;
+//    param << filename;
+//    bool started=QProcess::execute("explorer "+filename);
+
+
+    ShellExecuteW(NULL,QString("open").toStdWString().c_str(),QString(filename).toStdWString().c_str(),NULL,NULL,SW_SHOW);
+
+//    qDebug() <<"start process :"<< filename <<"; result:"<<started;
+
+}
+
+QStringList Widget::getFiles(const QString &path)
+{
+    QStringList ret;
+
+    QDir dir(path);
+    QFileInfoList infoList= dir.entryInfoList(QDir::Files | QDir::Dirs |QDir::NoDotAndDotDot);
+    for (int i=0;i<infoList.count();i++) {
+        QFileInfo info=infoList.at(i);
+        if(info.isDir()){
+            QString subDir=info.absoluteFilePath();
+            QStringList files=getFiles(subDir);
+            ret.append(files);
+        }else {
+            //absoluteFilePath：如果是目录，返回目录路径，如果是文件返回文件路径
+            QString filename=info.absoluteFilePath();
+            ret.append(filename);
+        }
+    }
+    return ret;
+}
+

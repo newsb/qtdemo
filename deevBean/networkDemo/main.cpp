@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    ///////////////////////开启也个进程/////////////////////////////////
+    ///////////////////////开启个进程/////////////////////////////////
     QString program = "C:/Windows/System32/cmd.exe";
     QStringList arguments;
     arguments << "/c" << "dir" << "C:\\";
