@@ -33,7 +33,7 @@ Widget::Widget(QWidget *parent)
 
     this->layout()->setMargin(9);
 
-
+    mymd5->cancelCalcMd5=false;
     myThread->start();
     mymd5->moveToThread(myThread);
 
@@ -55,6 +55,8 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
+    //
+    mymd5->cancelCalcMd5=true;
     myThread->exit();
     myThread->wait();
 

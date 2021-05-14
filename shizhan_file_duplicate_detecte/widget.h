@@ -44,7 +44,6 @@ private:
     QStringList getFiles(const QString &path);
     QThread * myThread;
     MyMd5 *mymd5;
-
 signals:
     void startCalcMd5(QStringList files);
 private slots:

@@ -238,7 +238,7 @@ QScrollBar::add-page, QScrollBar::sub-page {
 </string>
              </property>
              <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOn</enum>
+              <enum>Qt::ScrollBarAsNeeded</enum>
              </property>
              <property name="sizeAdjustPolicy">
               <enum>QAbstractScrollArea::AdjustIgnored</enum>
@@ -279,7 +279,7 @@ QScrollBar::add-page, QScrollBar::sub-page {
 </string>
              </property>
              <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOn</enum>
+              <enum>Qt::ScrollBarAsNeeded</enum>
              </property>
             </widget>
            </item>

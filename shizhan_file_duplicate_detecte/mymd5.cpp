@@ -32,7 +32,7 @@ QByteArray MyMd5::getFileMd5(const QString &filename)
 void MyMd5::onStartCalcMd5(QStringList files)
 {
     QHash<QByteArray,QStringList> duplicationList;
-    for(int i=0;i<files.count();i++){
+    for(int i=0;i<files.count()&&!cancelCalcMd5;i++){
         QString filename=files.at(i);
         QByteArray md5=getFileMd5(filename);
 
