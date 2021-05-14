@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="leftMargin">
     <number>0</number>
@@ -206,18 +209,102 @@ padding:9px;</string>
                <height>0</height>
               </size>
              </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true"> QScrollBar{
+    background-color: none;
+    border: 1px solid blue;
+    border-radius: 5px;
+    padding: 1px;
+}
+QScrollBar:hover{
+    border-color:red;
+}
+QScrollBar::handle{
+    border-radius: 3px;
+    background: green; 
+}
+QScrollBar::handle:hover {
+    background: gray;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line,
+QScrollBar::add-page, QScrollBar::sub-page {
+    width: 1px;
+    background: transparent;
+}
+</string>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOn</enum>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::AdjustIgnored</enum>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="viewMode">
+              <enum>QListView::IconMode</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="listWidget_2"/>
+            <widget class="QListWidget" name="listWidget_2">
+             <property name="styleSheet">
+              <string notr="true"> QScrollBar{
+    background-color: none;
+    border: 1px solid blue;
+    border-radius: 5px;
+    padding: 1px;
+}
+QScrollBar:hover{
+    border-color:red;
+}
+QScrollBar::handle{
+    border-radius: 3px;
+    background: green; 
+}
+QScrollBar::handle:hover {
+    background: gray;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line,
+QScrollBar::add-page, QScrollBar::sub-page {
+    width: 1px;
+    background: transparent;
+}
+</string>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOn</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
          <item>
           <widget class="QProgressBar" name="progressBar">
+           <property name="styleSheet">
+            <string notr="true">QProgressBar {
+   border:none;   /*无边框*/
+      background:white;
+      text-align:center;   /*文本的位置*/
+      color: rgb(229, 229, 229);  /*文本颜色*/
+
+	padding:0px;
+      border-radius:5px;
+}
+
+QProgressBar::chunk { 
+	background-color:rgb(58, 154, 255);
+    border-radius:4px;
+      border-radius:5px;
+	margin:0px;
+}</string>
+           </property>
            <property name="value">
             <number>0</number>
            </property>

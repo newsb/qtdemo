@@ -8,6 +8,7 @@ MyMd5::MyMd5(QObject *parent) : QObject(parent)
 #include <QFile>
 #include <QDebug>
 
+
 QByteArray MyMd5::getFileMd5(const QString &filename)
 {
     QByteArray md5val;

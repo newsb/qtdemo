@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include <QSplitter>
 #include <QGraphicsDropShadowEffect>
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -33,16 +34,30 @@ Widget::Widget(QWidget *parent)
     this->layout()->setMargin(9);
 
 
-    mymd5->moveToThread(myThread);
     myThread->start();
+    mymd5->moveToThread(myThread);
+
     connect(this,&Widget::startCalcMd5,mymd5,&MyMd5::onStartCalcMd5);
     connect(mymd5,&MyMd5::progress_changed,this,&Widget::onMyProgressChanged);
     connect(mymd5,&MyMd5::calcMd5Finished,this,&Widget::onCalcMd5Finished);
+
+
+    QSplitter *splitterMain = new QSplitter(Qt::Horizontal, ui->widget);
+    splitterMain->setStyleSheet("QSplitter{border: 0px;}");
+    ui->horizontalLayout_3->addWidget(splitterMain);
+    splitterMain->addWidget(ui->listWidget);
+    splitterMain->addWidget(ui->listWidget_2);
+    splitterMain->setStretchFactor(1,1);
+    splitterMain->setWindowTitle(QObject::tr("分割窗口"));
+    splitterMain->show();
 
 }
 
 Widget::~Widget()
 {
+    myThread->exit();
+    myThread->wait();
+
     delete ui;
 }
 
