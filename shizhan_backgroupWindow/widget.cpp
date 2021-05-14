@@ -6,60 +6,6 @@
 #include <QGuiApplication>
 
 
-HWND FindDTWindow(){
-    HWND hWnd = ::FindWindow(L"Progman", L"Program Manager");
-    DWORD dResult = 0;
-
-    SendMessageTimeout(hWnd,
-        0x052C,
-        0,
-        NULL,
-        SMTO_NORMAL,
-        1000,
-        &dResult);
-
-    HWND hwndWorkW = NULL;
-    do
-    {
-        hwndWorkW = ::FindWindowEx(NULL, hwndWorkW, L"WorkerW", NULL);
-        if (NULL == hwndWorkW)
-        {
-            continue;
-        }
-
-        HWND hView = ::FindWindowEx(hwndWorkW, NULL, L"SHELLDLL_DefView", NULL);
-        if (NULL == hView)
-        {
-            continue;
-        }
-
-        HWND h = ::FindWindowEx(NULL, hwndWorkW, L"WorkerW", NULL);
-        while (NULL != h)
-        {
-            SendMessage(h, WM_CLOSE, 0, 0);
-            h = ::FindWindowEx(NULL, hwndWorkW, L"WorkerW", NULL);
-        }
-        break;
-
-    } while (true);
-
-    return hWnd;
-
-}
-//————————————————
-//版权声明：本文为CSDN博主「蓦然回首时已逝」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-//原文链接：https://blog.csdn.net/gorecording/article/details/88219422
-
-static HWND g_workerw=0;
-static BOOL CALLBACK EnumWndCallback(HWND tophandle,LPARAM topparamhandle){
-    HWND p=FindWindowEx(tophandle,0,L"SHELLDLL_DefView",0);
-    if(p!=0){
-        //get the WorkerW window after the current one.
-        g_workerw=FindWindowEx(0,tophandle,L"WorkerW",0);
-    }
-    return true;
-}
-
 HWND _workerw = nullptr;
 
 inline BOOL CALLBACK EnumWindowsProc(_In_ HWND tophandle, _In_ LPARAM topparamhandle)
@@ -89,26 +35,7 @@ Widget::Widget(QWindow *parent)
     : QWindow(parent),
       store(this)
 {
-#if 0
-    HWND hwndProgram=FindWindowW(L"Progman",L"Program Manager");
-        qDebug()<<"hwndProgram:"<<hwndProgram;
-        DWORD dResult = 0;
-    SendMessageTimeout(hwndProgram,0x052C,0,0,SMTO_NORMAL,1000,&dResult);
-    EnumWindows(EnumWndCallback,0);
-    ShowWindow(g_workerw,SW_HIDE);
 
-    g_workerw=  FindDTWindow();
-    //    HWND hwndFolderView=FindWindowW(L"SHELLDLL_DefView",NULL);
-    //    qDebug()<<"hwndFolderView:"<<hwndFolderView;
-
-    //    HWND hwndSelf =(HWND) this->winId();//本窗口的window handle
-
-    //    SetParent(hwndSelf,hwndProgram);
-    qDebug()<<"  g_workerw== "<<g_workerw;
-    if(g_workerw==0){
-            abort();
-    }
-#endif
     HWND promgramHandle= GetWorkerW();
     qDebug()<<"  promgramHandle== "<<promgramHandle;
     if(promgramHandle==0){
@@ -133,7 +60,7 @@ Widget::Widget(QWindow *parent)
     QRect rectFullDesktop =screens.first()->availableGeometry();
     this->setGeometry(rectFullDesktop);
 
-    image=QImage("C:\\Users\\EDZ\\Desktop\\111.jpg");
+    image=QImage(":/res/1.jpg");
 }
 
 Widget::~Widget()
