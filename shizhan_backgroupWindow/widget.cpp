@@ -36,7 +36,7 @@ Widget::Widget(QWindow *parent)
       store(this)
 {
 
-    HWND promgramHandle= GetWorkerW();
+    HWND promgramHandle= GetWorkerW();//win10 mingw-64获取为0，win7 自定义的壁纸获取为0
     qDebug()<<"  promgramHandle== "<<promgramHandle;
     if(promgramHandle==0){
             abort();
@@ -75,10 +75,13 @@ bool Widget::event(QEvent *e)
         store.resize(this->size());
         store.beginPaint(rect);
         QPainter painter(store.paintDevice());
+
         painter.fillRect(rect,Qt::white);
         painter.drawImage(0,0,image);
-        store.endPaint();
+painter.end();
+
         store.flush(rect);
+        store.endPaint();
     }
     return QWindow::event(e);
 }
