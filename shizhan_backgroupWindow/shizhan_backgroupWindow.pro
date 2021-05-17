@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,9 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
+    httptestwidget.cpp \
+    mystrrequestwidget.cpp \
     widget.cpp
 
 HEADERS += \
+    httptestwidget.h \
+    mystrrequestwidget.h \
     widget.h
 
 # Default rules for deployment.
@@ -29,3 +33,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     res.qrc
+
+FORMS += \
+    mystrrequestwidget.ui

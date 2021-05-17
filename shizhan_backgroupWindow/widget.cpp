@@ -27,8 +27,6 @@ HWND Widget::GetWorkerW(){
     return windowHandle;
 }
 
-
-
 #include <QScreen>
 
 Widget::Widget(QWindow *parent)
@@ -61,6 +59,8 @@ Widget::Widget(QWindow *parent)
     this->setGeometry(rectFullDesktop);
 
     image=QImage(":/res/1.jpg");
+
+
 }
 
 Widget::~Widget()
@@ -78,11 +78,12 @@ bool Widget::event(QEvent *e)
 
         painter.fillRect(rect,Qt::white);
         painter.drawImage(0,0,image);
-painter.end();
+        painter.end();
 
         store.flush(rect);
         store.endPaint();
     }
     return QWindow::event(e);
 }
+
 

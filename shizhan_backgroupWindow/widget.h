@@ -3,8 +3,8 @@
 
 #include <QWindow>
 #include <QBackingStore>
-
 #include <QImage>
+
 class Widget : public QWindow
 {
     Q_OBJECT
@@ -19,5 +19,6 @@ private:
     QBackingStore store;
     QImage image;
     HWND GetWorkerW();
+
 };
 #endif // WIDGET_H
