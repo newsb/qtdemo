@@ -4,6 +4,8 @@
 #include <QThread>
 #include <QTcpSocket>
 
+#include <QFile>
+//#include<QDateTime>
 class RecvFileThread : public QThread
 {
     Q_OBJECT
@@ -14,7 +16,7 @@ signals:
     void recvOver();
 private:
     QTcpSocket * mSocket;
-
+    QFile *mFile;
 protected:
     virtual void run() override;
 };

@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(fs,&FileSend::connectBreak,this,[=](){
         QMessageBox::information(this,"提示"," 服务器已断开！");
     });
+    connect(fs,&FileSend::progressChanged,this,[=](int per){
+        ui->progressBar->setValue(per);
+    });
     connect(fs,&FileSend::sendOver,this,[=](){
        //发送完了
        t->quit();
@@ -64,7 +67,7 @@ void MainWindow::on_btnConnect_clicked()
 
 void MainWindow::on_btnSelect_clicked()
 {
-    QString s=QFileDialog::getOpenFileName(this,"文件选择","",tr("{text File(*.txt)"));
+    QString s=QFileDialog::getOpenFileName(this,"文件选择","",tr("{ALL File(*.*)"));
     if(!s.isEmpty()){
         ui->edtPath->setText(s);
     }
