@@ -7,13 +7,15 @@ class FileSend : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileSend(QTcpSocket * sock,QObject *parent = nullptr);
+    explicit FileSend(QObject *parent = nullptr);
 
     void connectServer(QString ip,quint16 port);
     void sendfile(QString filePath);
 
 signals:
-
+    void connectOK();
+    void sendOver();
+    void progressChanged(int per);
 private:
     QTcpSocket * mSocket;
 

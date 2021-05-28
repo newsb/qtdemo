@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 // server :再线程中accept、send
-#include <QTcpSocket>
+//#include <QTcpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,7 +29,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    QTcpSocket *m_socket;
+//    QTcpSocket *m_socket;
+signals:
 
+    void startConnect(QString ip,quint16 port);
+    void startSendFile(QString path);
 };
 #endif // MAINWINDOW_H

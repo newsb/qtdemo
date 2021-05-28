@@ -1,26 +1,47 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include "filesend.h"
 
+#include <QFile>
+#include<QDateTime>
+#include<QThread>
+#include<QMessageBox>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("客户端");
-    m_socket=new QTcpSocket(this);
+    qDebug()<<"MainWindow  currentThread:"<<QThread::currentThread();
+//    m_socket=new QTcpSocket(this);
+
+    FileSend *fs=new FileSend();
+    QThread *t=new QThread();
+    fs->moveToThread(t);
+    t->start();
+    connect(this,&MainWindow::startConnect,fs,&FileSend::connectServer);
+    connect(this,&MainWindow::startSendFile,fs,&FileSend::sendfile);
+    connect(fs,&FileSend::connectOK,this,[=](){
+        QMessageBox::information(this,"提示","连接服务器成功！");
+    });
+    connect(fs,&FileSend::sendOver,this,[=](){
+       //发送完了
+       t->quit();
+       t->wait();
+       t->deleteLater();
+       fs->deleteLater();
+       QMessageBox::information(this,"提示","发送完毕！");
+    });
 }
 
 MainWindow::~MainWindow()
 {
-    m_socket->close();
-    m_socket->deleteLater();
+//    m_socket->close();
+//    m_socket->deleteLater();
 
     delete ui;
 }
-
-#include <QFile>
-#include<QDateTime>
 
 
 void MainWindow::on_btnConnect_clicked()
@@ -28,27 +49,30 @@ void MainWindow::on_btnConnect_clicked()
 
     bool ok=false;
     quint16 port=ui->edtPort->text().toUInt(&ok);
-    if(!ok) {qDebug()<<"  port err"; return;}
+    if(!ok) {
+        qDebug()<<"  port err"; return;
+    }
     QString ip=ui->edtIP->text();
-    if(ip.isEmpty()) {qDebug()<<"  ip err"; return;}
+    if(ip.isEmpty())
+    {
+        qDebug()<<"  ip err"; return;
+    }
 
-    m_socket->connectToHost(ip,port);
+    emit startConnect(ip,port);
 
-    connect(m_socket,&QTcpSocket::connected,this,[=](){
-        qInfo()<<"socket connected";
-    });
-    connect(m_socket,&QTcpSocket::disconnected,[=](){
-        qInfo()<<"socket disconected";
-        m_socket->close();
-        m_socket->deleteLater();
+//    m_socket->connectToHost(ip,port);
 
-    });
+//    connect(m_socket,&QTcpSocket::connected,this,[=](){
+//        qInfo()<<"socket connected";
+//    });
+//    connect(m_socket,&QTcpSocket::disconnected,[=](){
+//        qInfo()<<"socket disconected";
+//        m_socket->close();
+//        m_socket->deleteLater();
 
-    void(QTcpSocket::* signal1)(QAbstractSocket::SocketError)=&QTcpSocket::error;
-//    auto signal1=QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error);
-    connect(m_socket,signal1 ,this,[=](QAbstractSocket::SocketError socketError){
-        qCritical()<<"socket err:"<<socketError;
-    });
+//    });
+
+
 
 }
 
@@ -65,26 +89,28 @@ void MainWindow::on_btnSelect_clicked()
 
 void MainWindow::on_btnSend_clicked()
 {
-    QString mPath=ui->edtPath->text();
+    QString path=ui->edtPath->text();
 
-    if(mPath.isEmpty()){
+    if(path.isEmpty()){
         qDebug()<<" select file null";
         return;
     }
+    emit startSendFile(path);
+//    if(m_socket->ConnectedState!=QAbstractSocket::ConnectedState){
+//        qDebug()<<" disconnected!"<<m_socket->ConnectedState;
+//        return;
+//    }
 
-    if(m_socket->ConnectedState!=QAbstractSocket::ConnectedState){
-        qDebug()<<" disconnected!"<<m_socket->ConnectedState;
-        return;
-    }
-
-    QFile file(mPath);
-    bool ok=file.open(QFile::ReadOnly);
-    if(!ok){
-        qDebug()<<" open file failed";
-        return;
-    }
-    QByteArray data=file.readAll();
-    m_socket->write(data);
-    m_socket->waitForBytesWritten();
+//    QFile file(path);
+//    bool ok=file.open(QFile::ReadOnly);
+//    if(!ok){
+//        qDebug()<<" open file failed";
+//        return;
+//    }
+//    QByteArray data=file.readAll();
+//    m_socket->write(data);
+//    m_socket->waitForBytesWritten();
 
 }
+
+
