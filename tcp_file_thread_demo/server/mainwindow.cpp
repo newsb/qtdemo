@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("服务端");
+    qDebug()<<"MainWindow::MainWindow currentThread:"<<QThread::currentThread();
 
     m_s=new QTcpServer(this);
     connect(m_s,&QTcpServer::newConnection,this,[=](){

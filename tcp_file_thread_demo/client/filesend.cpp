@@ -20,7 +20,7 @@ void FileSend::connectServer(QString ip, quint16 port)
         qInfo()<<"socket disconected";
         mSocket->close();
         mSocket->deleteLater();
-        emit sendOver();
+        emit connectBreak();
     });
 
     void(QTcpSocket::* signal1)(QAbstractSocket::SocketError)=&QTcpSocket::error;
@@ -61,4 +61,5 @@ void FileSend::sendfile(QString filePath)
         mSocket->write(line);
     }
 
+    emit sendOver();
 }

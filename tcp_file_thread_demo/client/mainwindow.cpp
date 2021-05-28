@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("客户端");
     qDebug()<<"MainWindow  currentThread:"<<QThread::currentThread();
-//    m_socket=new QTcpSocket(this);
 
     FileSend *fs=new FileSend();
     QThread *t=new QThread();
@@ -24,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this,&MainWindow::startSendFile,fs,&FileSend::sendfile);
     connect(fs,&FileSend::connectOK,this,[=](){
         QMessageBox::information(this,"提示","连接服务器成功！");
+    });
+    connect(fs,&FileSend::connectBreak,this,[=](){
+        QMessageBox::information(this,"提示"," 服务器已断开！");
     });
     connect(fs,&FileSend::sendOver,this,[=](){
        //发送完了
@@ -37,9 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-//    m_socket->close();
-//    m_socket->deleteLater();
-
     delete ui;
 }
 
@@ -59,21 +58,6 @@ void MainWindow::on_btnConnect_clicked()
     }
 
     emit startConnect(ip,port);
-
-//    m_socket->connectToHost(ip,port);
-
-//    connect(m_socket,&QTcpSocket::connected,this,[=](){
-//        qInfo()<<"socket connected";
-//    });
-//    connect(m_socket,&QTcpSocket::disconnected,[=](){
-//        qInfo()<<"socket disconected";
-//        m_socket->close();
-//        m_socket->deleteLater();
-
-//    });
-
-
-
 }
 
 #include <QFileDialog>
@@ -96,20 +80,6 @@ void MainWindow::on_btnSend_clicked()
         return;
     }
     emit startSendFile(path);
-//    if(m_socket->ConnectedState!=QAbstractSocket::ConnectedState){
-//        qDebug()<<" disconnected!"<<m_socket->ConnectedState;
-//        return;
-//    }
-
-//    QFile file(path);
-//    bool ok=file.open(QFile::ReadOnly);
-//    if(!ok){
-//        qDebug()<<" open file failed";
-//        return;
-//    }
-//    QByteArray data=file.readAll();
-//    m_socket->write(data);
-//    m_socket->waitForBytesWritten();
 
 }
 

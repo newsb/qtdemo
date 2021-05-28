@@ -12,6 +12,7 @@ void RecvFileThread::run()
 {
 //    QString fileName=QDateTime::currentDateTime().toString("yyyy-MM-dd-hhmmss")+".txt";
 
+    qDebug()<<"RecvFileThread::run currentThread:"<<QThread::currentThread();
         QFile *file=nullptr;
         connect(mSocket,&QTcpSocket::readyRead,this,[=,&file](){
             static bool ret=false;
@@ -50,6 +51,7 @@ void RecvFileThread::run()
                 emit recvOver();
             }
         });
+
     //启动时间循环卡住run方法，否则线程一下子退出了
     exec();
 }

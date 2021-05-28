@@ -14,6 +14,7 @@ public:
 
 signals:
     void connectOK();
+    void connectBreak();
     void sendOver();
     void progressChanged(int per);
 private:
