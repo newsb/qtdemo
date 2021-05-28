@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
             subThread->exit();
             subThread->wait();
             subThread->deleteLater();
+            socket->close();
+            socket->deleteLater();
             QMessageBox::information(this,"提示","接收完毕！");
         });
     });

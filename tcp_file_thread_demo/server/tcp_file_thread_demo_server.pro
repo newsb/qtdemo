@@ -2,7 +2,8 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #console:程序输出到控制台，不在creator里输出，避免启动多个项目时creator无法正常打印输出
-CONFIG += c++11 console
+#CONFIG += console
+CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings

@@ -46,9 +46,11 @@ void FileSend::sendfile(QString filePath)
         static qint64 num=0;
         QString fn=info.fileName();
         int fileSize=info.size();
+//        char * buf=new
         if(num==0){
             mSocket->write((char*)&fileSize,4);//第一次发送文件大小过去
-            mSocket->write((char*)&fn,255);
+            qDebug() <<"write file size:"<< fileSize;
+            mSocket->write(fn.toUtf8(),255);
             qDebug() <<"write fn:"<< fn;
         }
         QByteArray line=file.readLine();
