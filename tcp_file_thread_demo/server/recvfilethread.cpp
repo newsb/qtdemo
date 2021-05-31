@@ -7,9 +7,22 @@ RecvFileThread::RecvFileThread(QTcpSocket * socket,QObject *parent) : QThread(pa
 
     mFile=nullptr;
 
+}
+
+
+void RecvFileThread::run()
+{
+//    QString fileName=QDateTime::currentDateTime().toString("yyyy-MM-dd-hhmmss")+".txt";
+
+    qDebug()<<"RecvFileThread::run currentThread:"<<QThread::currentThread()
+           <<";current socket:"<<mSocket
+           <<";socket.isOpen:"<<mSocket->isOpen();
+
+
     connect(mSocket,&QTcpSocket::readyRead,this,[=](){
-        qDebug() <<"readyRead:";
-        static bool ret=false;
+        qDebug() <<"readyRead--------------bytesAvailable:"<< mSocket->bytesAvailable();
+
+        /*static bool ret=false;
         static int count=0;
         static int total=0;
 
@@ -29,14 +42,19 @@ RecvFileThread::RecvFileThread(QTcpSocket * socket,QObject *parent) : QThread(pa
             return;
         }
 
+        if( mFile==nullptr|| !mFile->isOpen()|| !mFile->isWritable()){
+            qDebug() <<"mFile is nullptr or  not isOpen or not isWritable";
+            return;
+        }
 
         //读取剩余数据
         QByteArray data=mSocket->readAll();
 
         if( data.isEmpty()){
-            qDebug() <<"readAll failed";
+            qDebug() <<"readAll isEmpty";
             return;
         }
+
         count+=data.size();
         mFile->write(data);
         qDebug() << "file write :" << data.size();
@@ -46,17 +64,12 @@ RecvFileThread::RecvFileThread(QTcpSocket * socket,QObject *parent) : QThread(pa
             mFile->close();
             mFile->deleteLater();
             emit recvOver();
-        }
+        }*/
     });
 
-}
-
-
-void RecvFileThread::run()
-{
-//    QString fileName=QDateTime::currentDateTime().toString("yyyy-MM-dd-hhmmss")+".txt";
-
-    qDebug()<<"RecvFileThread::run currentThread:"<<QThread::currentThread();
+    qDebug() << "waitting recv data ... "  ;
     //启动时间循环卡住run方法，否则线程一下子退出了
     exec();
+
+     qDebug() << "recv thread done  "  ;
 }

@@ -11,23 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("服务端");
     qDebug()<<"MainWindow::MainWindow currentThread:"<<QThread::currentThread();
 
-    m_s=new QTcpServer(this);
-    connect(m_s,&QTcpServer::newConnection,this,[=](){
-        QTcpSocket *socket=m_s->nextPendingConnection();
 
-        //创建子线程
-        RecvFileThread *subThread=new RecvFileThread(socket);
-        subThread->start();
-        connect(subThread,&RecvFileThread::recvOver,this,[=](){
-            //接收文件完成，退出
-            subThread->exit();
-            subThread->wait();
-            subThread->deleteLater();
-            socket->close();
-            socket->deleteLater();
-            QMessageBox::information(this,"提示","接收完毕！");
-        });
-    });
+    m_s=new QTcpServer(this);
 }
 
 MainWindow::~MainWindow()
@@ -44,8 +29,31 @@ void MainWindow::on_btnStartListen_clicked()
     quint16 port=ui->edtPort->text().toUInt(&ok);
     if(!ok) {qDebug()<<"  port err"; return;}
 
+    if (m_s->isListening())
+        return;
+
     ok=m_s->listen(QHostAddress::Any,port);
     if(!ok) {qDebug()<<"listen err"; return;}
+
+
+    connect(m_s,&QTcpServer::newConnection,this,[=](){
+        QTcpSocket *socket=m_s->nextPendingConnection();
+
+        qDebug()<<"newConnection socket:"<<socket;
+        //创建子线程
+        RecvFileThread *subThread=new RecvFileThread(socket);
+        connect(subThread,&RecvFileThread::recvOver,this,[=](){
+           qDebug()<<"RecvFileThread::recvOver "; //接收文件完成，退出
+            subThread->exit();
+            subThread->wait();
+            subThread->deleteLater();
+            socket->close();
+            socket->deleteLater();
+            QMessageBox::information(this,"提示","接收完毕！");
+        });
+
+        subThread->start();
+    });
 
     connect(m_s,&QTcpServer::acceptError,this,[=](QAbstractSocket::SocketError socketError){
        qCritical()<<"acceptError:"<<socketError << ";errorString:" <<m_s->errorString(); //TODO:如何转义socketError参数？？？m_s->errorString;

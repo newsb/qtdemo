@@ -30,6 +30,7 @@ void FileSend::connectServer(QString ip, quint16 port)
         mSocket->disconnectFromHost();
     });
 }
+
 #include <QFileInfo>
 void FileSend::sendfile(QString filePath)
 {
@@ -62,7 +63,7 @@ void FileSend::sendfile(QString filePath)
         int per=num*100/fileSize ;
         emit progressChanged(per);
         mSocket->write(line);
-//        QThread::usleep(300);
+        QThread::usleep(800);
     }
 
     emit sendOver();
