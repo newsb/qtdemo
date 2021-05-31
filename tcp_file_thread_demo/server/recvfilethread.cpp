@@ -18,53 +18,77 @@ void RecvFileThread::run()
            <<";current socket:"<<mSocket
            <<";socket.isOpen:"<<mSocket->isOpen();
 
+    void(QTcpSocket::* signal1)(QAbstractSocket::SocketError)=&QTcpSocket::error;
+    //auto signal1=QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error);
+    connect(mSocket,signal1 ,this,[=](QAbstractSocket::SocketError socketError){
+        qDebug()<<"socket err:"<<socketError<<";socket.errorString:"<<mSocket->errorString();
+    });
+
+    const int MAX_SIZE_READ=7*1024;
 
     connect(mSocket,&QTcpSocket::readyRead,this,[=](){
-        qDebug() <<"readyRead--------------bytesAvailable:"<< mSocket->bytesAvailable();
+        int avaiSize=mSocket->bytesAvailable();
+        qDebug() <<"readyRead--------------bytesAvailable:"<< avaiSize;
 
-        /*static bool ret=false;
+        static bool ret=false;
         static int count=0;
         static int total=0;
 
+        int readSize=0;
         if (count==0){
             mSocket->read((char *)&total,4);//先接收头4位文件大小
             qDebug() <<"read file size:"<< total;
+            count+=4;
 
             QByteArray fndata=mSocket->read(255 );
+            count+=255;
             QString fn=QString(fndata);
             qDebug() <<"read fn:"<< fn;
 
+            readSize+=4;
+            readSize+=255;
+
             mFile=new QFile(fn);
             ret= mFile->open(QFile::WriteOnly);
-        }
-        if( !ret){
-            qDebug() <<"open fn failed";
-            return;
-        }
+            if( !ret){
+                qDebug() <<"open fn failed";
+                return;
+            }
 
-        if( mFile==nullptr|| !mFile->isOpen()|| !mFile->isWritable()){
-            qDebug() <<"mFile is nullptr or  not isOpen or not isWritable";
-            return;
-        }
-
-        //读取剩余数据
-        QByteArray data=mSocket->readAll();
-
-        if( data.isEmpty()){
-            qDebug() <<"readAll isEmpty";
-            return;
+            if( mFile==nullptr|| !mFile->isOpen()|| !mFile->isWritable()){
+                qDebug() <<"mFile is nullptr or  not isOpen or not isWritable";
+                return;
+            }
         }
 
-        count+=data.size();
-        mFile->write(data);
-        qDebug() << "file write :" << data.size();
-        if(count==total){
+        while ( readSize<avaiSize){//(count<total){
+            QByteArray data=mSocket->read(MAX_SIZE_READ);
+//            if( data.isEmpty()){
+//                qDebug() <<"read isEmpty:"<<data.size();
+//                //count+=data.size();
+//                //break;//                continue;
+
+//            }
+            readSize+=data.size();
+            mFile->write(data);
+            mFile->waitForBytesWritten(100000);
+            count+=data.size();
+            qDebug() << "file write :" << data.size()<<";  readSize="<<readSize;
+        }
+
+        qDebug() << "file end  count="<<count;
+        if(count==total+255+4){
             //接收完了
             mFile->flush();
             mFile->close();
             mFile->deleteLater();
             emit recvOver();
-        }*/
+
+        }
+
+
+
+
     });
 
     qDebug() << "waitting recv data ... "  ;

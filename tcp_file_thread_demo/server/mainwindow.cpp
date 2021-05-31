@@ -69,10 +69,6 @@ void MainWindow::on_btnStartListen_clicked()
 
 //    });
 
-//          void(QTcpSocket::* signal1)(QAbstractSocket::SocketError)=&QTcpSocket::error;
-//    auto signal1=QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error);
-//    connect(socket,signal1 ,this,[=](QAbstractSocket::SocketError socketError){
-//        qCritical()<<"socket err:"<<socketError;
-//    });
+
 
 }

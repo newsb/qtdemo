@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     qDebug()<<"qApp->thread() :"<< qApp->thread() ;
 
     qDebug()<<"QThread::currentThread()  :"<< QThread::currentThread() ;
-#if 0
+#if 1
     QString filename="D:\\1x.txt";
     QByteArray data="heel";
 

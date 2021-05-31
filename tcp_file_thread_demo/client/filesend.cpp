@@ -57,12 +57,13 @@ void FileSend::sendfile(QString filePath)
             qDebug() <<"write fn:"<< fn;
         }
 //        QByteArray line=file.readLine();
-        QByteArray line=file.read(1024*8);
+        QByteArray line=file.read(1024*7);
         qint64 len=line.size();
         num+=len;
         int per=num*100/fileSize ;
         emit progressChanged(per);
         mSocket->write(line);
+        mSocket->waitForBytesWritten();
         QThread::usleep(800);
     }
 
