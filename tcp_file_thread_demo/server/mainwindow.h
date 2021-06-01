@@ -7,6 +7,9 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include <QFile>
+#include<QDateTime>
+#include<QThread>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -26,5 +29,6 @@ private:
     Ui::MainWindow *ui;
 
     QTcpServer *m_s;
+    QFile *mFile;
 };
 #endif // MAINWINDOW_H

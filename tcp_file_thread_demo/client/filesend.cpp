@@ -63,7 +63,7 @@ void FileSend::sendfile(QString filePath)
         int per=num*100/fileSize ;
         emit progressChanged(per);
         mSocket->write(line);
-        mSocket->waitForBytesWritten();
+//        mSocket->waitForBytesWritten();
         QThread::usleep(800);
     }
 
