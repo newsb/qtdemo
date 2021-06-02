@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-//#include "recvfilethread.h"
+#include "recvfilethread.h"
 #include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,7 +16,30 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_s,&QTcpServer::acceptError,this,[=](QAbstractSocket::SocketError socketError){
        qCritical()<<"acceptError:"<<socketError << ";errorString:" <<m_s->errorString(); //TODO:如何转义socketError参数？？？m_s->errorString;
     });
+    connect(m_s,&QTcpServer::newConnection,this,[=](){
+        QTcpSocket *socket=m_s->nextPendingConnection();
 
+        qDebug()<<"newConnection socket:"<<socket;
+        //创建子线程
+        RecvFileThread *subThread=new RecvFileThread(socket);
+        connect(subThread,&RecvFileThread::recvOver,this,[=](){
+           qDebug()<<"RecvFileThread::recvOver "; //接收文件完成，退出
+            subThread->exit();
+            subThread->wait();
+            subThread->deleteLater();
+            socket->close();
+            socket->deleteLater();
+            QMessageBox::information(this,"提示","接收完毕！");
+        });
+
+        connect(subThread,&RecvFileThread::progressChanged,this,[=](int per){
+            ui->progressBar->setValue(per);
+        });
+
+        subThread->start();
+    });
+
+/* recv sync:
     connect(m_s,&QTcpServer::newConnection,this,[=](){
         QTcpSocket *mSocket=m_s->nextPendingConnection();
         qDebug()<<"RecvFileThread::run currentThread:"<<QThread::currentThread()
@@ -65,27 +88,32 @@ MainWindow::MainWindow(QWidget *parent)
                 }
             }
 
-//QByteArray data=mSocket->readAll();
-//mFile->write(data);
-//mFile->waitForBytesWritten(100000);
-//count+=data.size();
-//qDebug() << "file write :" << data.size() ;
+QByteArray data=mSocket->readAll();
+mFile->write(data);
 
-            while ( readSize<avaiSize){//(count<total){
-                QByteArray data=mSocket->read(1024*7);
-    //            if( data.isEmpty()){
-    //                qDebug() <<"read isEmpty:"<<data.size();
-    //                //count+=data.size();
-    //                //break;//                continue;
+//！！！不加上waitForBytesWritten，则服务端不触发或很少触发readyRead信号！~
+//但接收时不需要调用mFile->waitForBytesWritten函数。。
+//mFile->waitForBytesWritten(100000);//
+count+=data.size();
+qDebug() << "file write :" << data.size() ;
 
-    //            }
-                readSize+=data.size();
-                mFile->write(data);
-                mFile->waitForBytesWritten(100000);
-                count+=data.size();
-                qDebug() << "file write :" << data.size()<<";  readSize="<<readSize;
-            }
-            qDebug() << "file end  count="<<count;
+//            while ( readSize<avaiSize){//(count<total){
+//                QByteArray data=mSocket->read(1024*7);
+//    //            if( data.isEmpty()){
+//    //                qDebug() <<"read isEmpty:"<<data.size();
+//    //                //count+=data.size();
+//    //                //break;//                continue;
+
+//    //            }
+//                readSize+=data.size();
+//                mFile->write(data);
+//！！！不加上waitForBytesWritten，则服务端不触发或很少触发readyRead信号！~
+//但接收时不需要调用mFile->waitForBytesWritten函数。。
+//                mFile->waitForBytesWritten(100000);
+//                count+=data.size();
+//                qDebug() << "file write :" << data.size()<<";  readSize="<<readSize;
+//            }
+//            qDebug() << "file end  count="<<count;
 
             if(count==total+255+4){
                 //接收完了
@@ -101,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         qDebug() << "waitting recv data ... "  ;
     });
+    */
 }
 
 MainWindow::~MainWindow()
@@ -111,15 +140,25 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnStartListen_clicked()
 {
-    bool ok=false;
-    quint16 port=ui->edtPort->text().toUInt(&ok);
-    if(!ok) {qDebug()<<"  port err"; return;}
 
     if (m_s->isListening())
         return;
+    bool ok=false;
+    quint16 port=ui->edtPort->text().toUInt(&ok);
+    if(!ok) {qDebug()<<"  port err"; return;}
+    QString ip=ui->edtIP->text();
+    QHostAddress host(QHostAddress::Any);
+    if(!ip.isEmpty())
+    {
+        host=QHostAddress(ip);
+    }
 
-    ok=m_s->listen(QHostAddress::Any,port);
-    if(!ok) {qDebug()<<"listen err"; return;}
+    ok=m_s->listen(host,port);
+    if(!ok){
+        qDebug()<<"listen err"; return;
+    }else{
+        qDebug()<<"listen on "<<m_s->serverAddress()<<":"<<m_s->serverPort();
+    }
 
 
 

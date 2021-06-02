@@ -60,21 +60,28 @@ void RecvFileThread::run()
                 return;
             }
         }
+        QByteArray data=mSocket->readAll();
+        mFile->write(data);
 
-        while ( readSize<avaiSize){//(count<total){
-            QByteArray data=mSocket->read(MAX_SIZE_READ);
-//            if( data.isEmpty()){
-//                qDebug() <<"read isEmpty:"<<data.size();
-//                //count+=data.size();
-//                //break;//                continue;
+        //！！！不加上waitForBytesWritten，则服务端不触发或很少触发readyRead信号！~
+        //但接收时不需要调用mFile->waitForBytesWritten函数。。
+        //mFile->waitForBytesWritten(100000);//
+        count+=data.size();
+        qDebug() << "file write :" << data.size() ;
+        int per=count*100/(total+255+4) ;
+        emit progressChanged(per);
 
-//            }
-            readSize+=data.size();
-            mFile->write(data);
-            mFile->waitForBytesWritten(100000);
-            count+=data.size();
-            qDebug() << "file write :" << data.size()<<";  readSize="<<readSize;
-        }
+//分块接收
+//        while ( readSize<avaiSize){//(count<total){
+//            QByteArray data=mSocket->read(MAX_SIZE_READ);
+//            readSize+=data.size();
+//            mFile->write(data);
+//            //！！！不加上waitForBytesWritten，则服务端不触发或很少触发readyRead信号！~
+//            //但接收时不需要调用mFile->waitForBytesWritten函数。。
+// //            mFile->waitForBytesWritten(100000);
+//            count+=data.size();
+//            qDebug() << "file write :" << data.size()<<";  readSize="<<readSize;
+//        }
 
         qDebug() << "file end  count="<<count;
         if(count==total+255+4){

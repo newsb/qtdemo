@@ -14,6 +14,7 @@ public:
 
 signals:
     void recvOver();
+    void progressChanged(int per);
 private:
     QTcpSocket * mSocket;
     QFile *mFile;

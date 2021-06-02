@@ -10,6 +10,7 @@ FileSend::FileSend(QObject *parent) : QObject(parent)
 
 void FileSend::connectServer(QString ip, quint16 port)
 {
+    //todo:add proxy!!!
     qDebug()<<"FileSend::connectServer currentThread:"<<QThread::currentThread();
     mSocket=new QTcpSocket(this);
     mSocket->connectToHost(ip,port);
@@ -62,9 +63,12 @@ void FileSend::sendfile(QString filePath)
         num+=len;
         int per=num*100/fileSize ;
         emit progressChanged(per);
-        mSocket->write(line);
-//        mSocket->waitForBytesWritten();
-        QThread::usleep(800);
+        int writenSize=mSocket->write(line);
+        qDebug()<<"writenSize:"<<writenSize;
+        //！！！不加上waitForBytesWritten，则服务端不触发或很少触发readyRead信号！~
+        //但接收时不需要调用mFile->waitForBytesWritten函数。。
+        mSocket->waitForBytesWritten();
+//        QThread::usleep(800);
     }
 
     emit sendOver();
