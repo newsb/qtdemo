@@ -30,6 +30,9 @@ void FileSend::connectServer(QString ip, quint16 port)
         qCritical()<<"socket err:"<<socketError;
         mSocket->disconnectFromHost();
     });
+
+    if (mSocket->waitForConnected(-1))
+        qDebug("Connected!");
 }
 
 #include <QFileInfo>
