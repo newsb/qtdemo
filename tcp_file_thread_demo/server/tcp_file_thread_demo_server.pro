@@ -19,10 +19,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mytcpserver.cpp \
     recvfilethread.cpp
 
 HEADERS += \
     mainwindow.h \
+    mytcpserver.h \
     recvfilethread.h
 
 FORMS += \

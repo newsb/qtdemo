@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug()<<"MainWindow::MainWindow currentThread:"<<QThread::currentThread();
 
 
-    m_s=new QTcpServer(this);
+    m_s=new MyTCPServer(this);
     connect(m_s,&QTcpServer::acceptError,this,[=](QAbstractSocket::SocketError socketError){
        qCritical()<<"acceptError:"<<socketError << ";errorString:" <<m_s->errorString(); //TODO:如何转义socketError参数？？？m_s->errorString;
     });

@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 // server :再线程中accept、send
-#include <QTcpServer>
+#include "mytcpserver.h"
 #include <QTcpSocket>
 
 #include <QFile>
@@ -28,7 +28,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    QTcpServer *m_s;
+    MyTCPServer *m_s;
     QFile *mFile;
 };
 #endif // MAINWINDOW_H
