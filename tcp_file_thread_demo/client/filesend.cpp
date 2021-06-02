@@ -31,8 +31,8 @@ void FileSend::connectServer(QString ip, quint16 port)
         mSocket->disconnectFromHost();
     });
 
-    if (mSocket->waitForConnected(-1))
-        qDebug("Connected!");
+//    if (mSocket->waitForConnected(-1))
+//        qDebug("Connected!");
 }
 
 #include <QFileInfo>
