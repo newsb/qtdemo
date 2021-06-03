@@ -25,6 +25,8 @@ public:
 private slots:
     void on_btnStartListen_clicked();
 
+    void on_btnStopListening_clicked();
+
 private:
     Ui::MainWindow *ui;
 

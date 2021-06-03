@@ -13,9 +13,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     m_s=new MyTCPServer(this);
+
     connect(m_s,&QTcpServer::acceptError,this,[=](QAbstractSocket::SocketError socketError){
        qCritical()<<"acceptError:"<<socketError << ";errorString:" <<m_s->errorString(); //TODO:如何转义socketError参数？？？m_s->errorString;
     });
+
     connect(m_s,&QTcpServer::newConnection,this,[=](){
         QTcpSocket *socket=m_s->nextPendingConnection();
 
@@ -157,10 +159,29 @@ void MainWindow::on_btnStartListen_clicked()
     if(!ok){
         qDebug()<<"listen err"; return;
     }else{
+        ui->btnStartListen->setEnabled(false);
+        ui->btnStopListening->setEnabled(true);
+        ui->edtIP->setEnabled(false);
+        ui->edtPort->setEnabled(false);
+        ui->lblIp->setEnabled(false);
+        ui->lblPort->setEnabled(false);
         qDebug()<<"listen on "<<m_s->serverAddress()<<":"<<m_s->serverPort();
     }
 
 
 
 
+}
+
+void MainWindow::on_btnStopListening_clicked()
+{
+    if (!m_s->isListening())
+        return;
+    m_s->close();
+    ui->btnStartListen->setEnabled(true);
+    ui->btnStopListening->setEnabled(false);
+    ui->edtIP->setEnabled(true);
+    ui->edtPort->setEnabled(true);
+    ui->lblIp->setEnabled(true);
+    ui->lblPort->setEnabled(true);
 }

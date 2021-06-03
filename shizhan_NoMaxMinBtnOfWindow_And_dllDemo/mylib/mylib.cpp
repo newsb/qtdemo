@@ -10,3 +10,7 @@ void testfun()
 {
     qDebug() <<"msg from dll.testfun";
 }
+char * testfun2()
+{
+    return (char *)"usb250";
+}

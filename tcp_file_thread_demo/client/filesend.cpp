@@ -1,6 +1,7 @@
 #include "filesend.h"
 #include <QDebug>
 #include <QFile>
+#include <QNetworkProxy>
 
 #include <QThread>
 
@@ -8,11 +9,27 @@ FileSend::FileSend(QObject *parent) : QObject(parent)
 {
 }
 
-void FileSend::connectServer(QString ip, quint16 port)
+void FileSend::connectServer(QString ip, quint16 port,bool useProxy,int proxyType,QString proxyIp,quint16 proxyPort,QString proxyUsr,QString proxyPwd)
 {
+    Q_UNUSED(proxyType);
+    Q_UNUSED(proxyPwd);
+    Q_UNUSED(proxyIp);
+    Q_UNUSED(proxyPort);
+    Q_UNUSED(proxyUsr);
     //todo:add proxy!!!
     qDebug()<<"FileSend::connectServer currentThread:"<<QThread::currentThread();
     mSocket=new QTcpSocket(this);
+
+    if(useProxy){
+        QNetworkProxy::ProxyType type=QNetworkProxy::NoProxy;
+        if(proxyType==1){
+            type=QNetworkProxy::HttpProxy;
+        }else if(proxyType==2){
+            type=QNetworkProxy::Socks5Proxy;
+        }
+        mSocket->setProxy(QNetworkProxy(type,proxyIp,proxyPort,proxyUsr,proxyPwd));
+    }
+
     mSocket->connectToHost(ip,port);
 
     connect(mSocket,&QTcpSocket::connected,this,&FileSend::connectOK);
@@ -23,6 +40,13 @@ void FileSend::connectServer(QString ip, quint16 port)
         mSocket->deleteLater();
         emit connectBreak();
     });
+//    connect(mSocket,&QTcpSocket::stateChanged,this,[=](QTcpSocket::SocketState socketState){
+//        if (socketState==QTcpSocket::ConnectedState){
+//            emit connectOK();
+//        }else if(socketState==QTcpSocket::UnconnectedState){
+//            emit connectBreak();
+//        }
+//    });
 
     void(QTcpSocket::* signal1)(QAbstractSocket::SocketError)=&QTcpSocket::error;
 //    auto signal1=QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error);
@@ -75,4 +99,12 @@ void FileSend::sendfile(QString filePath)
     }
 
     emit sendOver();
+}
+
+void FileSend::onTestProxyConnection(QString proxyIp, quint16 proxyPort, QString proxyUsr, QString proxyPwd)
+{
+    Q_UNUSED(proxyIp);
+    Q_UNUSED(proxyPort);
+    Q_UNUSED(proxyUsr);
+    Q_UNUSED(proxyPwd);
 }
