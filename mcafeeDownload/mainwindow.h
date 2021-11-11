@@ -26,6 +26,8 @@ private slots:
     void onHeaderFinished();
     void onlistFileFinished();
     void onErr(QNetworkReply::NetworkError);
+    void on_btnPause_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -33,5 +35,7 @@ private:
     void startGetHeaderSize(const QString url);
     void startDownloadFile(const QString url);
     void onDownloadProgressChange(qint64 bytesReceived, qint64 bytesTotal);
+    void log(const QString s);
+
 };
 #endif // MAINWINDOW_H

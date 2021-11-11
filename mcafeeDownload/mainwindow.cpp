@@ -19,16 +19,20 @@ const QString TEST_URL="http://download.nai.com/products/licensed/superdat/engli
 
 void MainWindow::startListFile()
 {
+    this->log("1、list file...");
     QNetworkAccessManager *mgr=new QNetworkAccessManager();
     QNetworkProxy proxy(QNetworkProxy::HttpProxy,"172.16.0.11",3128);
     mgr->setProxy(proxy);
     QString url=LIST_URL;
     QNetworkRequest request((QUrl(url)));
 //        request.setUrl(QUrl(url));
+
+    QEventLoop eventLoop;
     QNetworkReply *reply2=mgr->get(request);
+    connect(reply2,&QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
     connect(reply2,&QNetworkReply::finished,this,&MainWindow::onlistFileFinished);
     connect(reply2, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this,&MainWindow::onErr);
-
+    eventLoop.exec();
 }
 
 void MainWindow::onlistFileFinished(){
@@ -43,9 +47,12 @@ void MainWindow::onlistFileFinished(){
     }
     QString body=reply->readAll();
 
-    ui->edtLog->append("body:"+body);
+    log("list file end:");
 
+    //TODO:parser boy to get newest filename
+     (body);
 
+    startGetHeaderSize(TEST_URL);
 }
 
 void MainWindow::startGetHeaderSize(const QString url)
@@ -54,10 +61,13 @@ void MainWindow::startGetHeaderSize(const QString url)
     QNetworkProxy proxy(QNetworkProxy::HttpProxy,"172.16.0.11",3128);
     mgr->setProxy(proxy);
 
+    QEventLoop eventLoop;
     QNetworkRequest request((QUrl(url)));
     QNetworkReply *reply2=mgr->head(request);
+    connect(reply2,&QNetworkReply::finished,&eventLoop,&QEventLoop::quit );
     connect(reply2,&QNetworkReply::finished,this,&MainWindow::onHeaderFinished);
     connect(reply2, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this,&MainWindow::onErr);
+    eventLoop.exec();
 }
 
 void MainWindow::onHeaderFinished(){
@@ -75,6 +85,9 @@ void MainWindow::onHeaderFinished(){
     QString iSize=var.toString();
 
     ui->lblSize->setText(iSize);
+
+
+    startDownloadFile(TEST_URL);
 }
 
 
@@ -83,23 +96,32 @@ void MainWindow::startDownloadFile(const QString url)
     QNetworkAccessManager *mgr=new QNetworkAccessManager();
     QNetworkProxy proxy(QNetworkProxy::HttpProxy,"172.16.0.11",3128);
     mgr->setProxy(proxy);
-
+    QEventLoop event;
     QNetworkRequest request((QUrl(url)));
     QNetworkReply *reply=mgr->get(request);
+    connect(reply,&QNetworkReply::finished,&event,&QEventLoop::quit);
     connect(reply,&QNetworkReply::finished,this,&MainWindow::onFinished);
-//
+
     connect(reply,&QNetworkReply::downloadProgress,this,&MainWindow::onDownloadProgressChange);
     connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this,&MainWindow::onErr);
-
+    event.exec();
 }
 
 void MainWindow::onDownloadProgressChange(qint64 bytesReceived, qint64 bytesTotal)
 {
     int per=bytesReceived*100/bytesTotal;
     ui->progressBar->setValue(per);
-    QString s=QString::number(bytesTotal);
+    double dRec=bytesReceived/(1024.0*1024);
+    double dTotal=bytesTotal/(1024.0*1024);
+    QString s=QString::number(dRec,'f',2)+"M / "+QString::number(dTotal,'f',2)+"M/";
     ui->lblSize->setText(s);
 }
+
+void MainWindow::log(const QString s)
+{
+    ui->edtLog->append(s);
+}
+
 void MainWindow::onFinished(){
 
     ui->progressBar->setValue(100);
@@ -107,10 +129,10 @@ void MainWindow::onFinished(){
 void MainWindow::on_btnDownload_clicked()
 {
     startListFile();
+
+    /*
     startGetHeaderSize(TEST_URL);
     startDownloadFile(TEST_URL);
-    /*
-
 */
 }
 
@@ -126,3 +148,7 @@ void MainWindow::onErr(QNetworkReply::NetworkError code){
      ui->edtLog->append("reply errString:"+reply->errorString());
 }
 
+
+void MainWindow::on_btnPause_clicked()
+{
+}
